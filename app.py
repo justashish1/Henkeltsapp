@@ -110,7 +110,7 @@ def custom_css():
                 font-weight: bold;
             }
             .stButton > button:hover {
-                background-color: #28a745;
+                background-color: #FF0000;
             }
             .custom-error {
                 background-color: #ff4c4c;
