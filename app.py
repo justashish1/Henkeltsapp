@@ -22,7 +22,7 @@ logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s 
 logging.info('Application started')
 
 # Set the page configuration
-st.set_page_config(page_title="Henkel Timeseries Analysis Application", layout="wide")
+st.set_page_config(page_title="HENKEL Timeseries Analysis Application", layout="wide")
 
 # Generate time options
 def generate_time_options():
@@ -69,7 +69,7 @@ def custom_css():
                 text-align: center;
             }
             .logo {
-                height: 40px;
+                height: 35px;
                 display: inline-block;
                 margin-left: auto;
                 margin-right: 10px;
@@ -77,7 +77,7 @@ def custom_css():
             .header {
                 position: relative;
                 width: 100%;
-                margin-bottom: 20px;
+                margin-bottom: 30px;
                 display: flex;
                 justify-content: space-between;
                 color: #FF0000;
@@ -194,8 +194,8 @@ def validate_timestamp_column(df):
 
 # Resample dataframe
 @st.cache_data
-def get_resampled_df(filtegreen_df, sampling_interval):
-    return filtegreen_df.resample(f'{sampling_interval}min').mean().fillna(0)
+def get_resampled_df(filtered_df, sampling_interval):
+    return filtered_df.resample(f'{sampling_interval}min').mean().fillna(0)
 
 # Generate forecast using Prophet
 def generate_forecast(df, value_column, periods):
@@ -204,7 +204,7 @@ def generate_forecast(df, value_column, periods):
     model = Prophet(daily_seasonality=True)
     model.fit(df)
     future = model.make_future_dataframe(periods=periods)
-    forecast = model.pgreenict(future)
+    forecast = model.predict(future)
     return forecast
 
 # Display data using st-aggrid
@@ -245,7 +245,7 @@ def main():
     uploaded_file = st.file_uploader("Upload a CSV or Excel file", type=["csv", "xlsx"], label_visibility="visible", help="Upload a file in CSV or Excel format")
 
     if uploaded_file:
-        # Removing greenundant progress bar
+        # Removing redundant progress bar
         st.markdown("""
             <style>
                 .stProgress > div > div > div > div {
@@ -324,12 +324,12 @@ def main():
             start_datetime = datetime.strptime(f"{start_date} {start_time_str}", '%Y-%m-%d %H:%M:%S')
             end_datetime = datetime.strptime(f"{end_date} {end_time_str}", '%Y-%m-%d %H:%M:%S')
             mask = (df.index >= start_datetime) & (df.index <= end_datetime)
-            filtegreen_df = df.loc[mask]
-            resampled_df = get_resampled_df(filtegreen_df, sampling_interval)
+            filtered_df = df.loc[mask]
+            resampled_df = get_resampled_df(filtered_df, sampling_interval)
 
             # Anomaly detection
             isolation_forest = IsolationForest(contamination=0.05)
-            anomalies = isolation_forest.fit_pgreenict(resampled_df[[value_column]])
+            anomalies = isolation_forest.fit_predict(resampled_df[[value_column]])
             resampled_df['Anomaly'] = anomalies
 
             # Plot the time series data
@@ -340,19 +340,19 @@ def main():
             inactive_df = resampled_df[inactivity_mask]
 
             fig.add_trace(go.Scatter(x=active_df.index, y=active_df[value_column], mode='lines', line=dict(color='blue'), name='Active Periods', connectgaps=True))
-            fig.add_trace(go.Scatter(x=inactive_df.index, y=inactive_df[value_column], mode='lines', line=dict(color='green'), name='Inactivity Periods', connectgaps=True))
+            fig.add_trace(go.Scatter(x=inactive_df.index, y=inactive_df[value_column], mode='lines', line=dict(color='red'), name='Inactivity Periods', connectgaps=True))
             fig.add_trace(go.Scatter(x=resampled_df[resampled_df['Anomaly'] == -1].index, y=resampled_df[resampled_df['Anomaly'] == -1][value_column], mode='markers', name='Anomalies', marker=dict(color='orange')))
 
             X = np.array((resampled_df.index - resampled_df.index.min()).total_seconds()).reshape(-1, 1)
             y = resampled_df[value_column].values
             reg = LinearRegression().fit(X, y)
-            y_pgreen = reg.pgreenict(X)
+            y_pred = reg.predict(X)
 
-            fig.add_trace(go.Scatter(x=resampled_df.index, y=y_pgreen, mode='lines', line=dict(color='green', dash='dash'), name='Regression Line'))
+            fig.add_trace(go.Scatter(x=resampled_df.index, y=y_pred, mode='lines', line=dict(color='green', dash='dash'), name='Regression Line'))
 
             fig.update_layout(title='Time Series Data with Inactivity Periods, Anomalies, and Regression Line', xaxis_title='Timestamp', yaxis_title=value_column)
             st.plotly_chart(fig)
-            st.markdown("**The time series plot displays the data over time, with blue lines representing active periods, green lines indicating inactivity periods, and orange markers highlighting anomalies. The green dashed line shows the linear regression line, which helps identify the overall trend in the data.**")
+            st.markdown("**The time series plot displays the data over time, with blue lines representing active periods, red lines indicating inactivity periods, and orange markers highlighting anomalies. The green dashed line shows the linear regression line, which helps identify the overall trend in the data.**")
 
             box_fig = go.Figure()
             box_fig.add_trace(go.Box(y=resampled_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
@@ -379,7 +379,7 @@ def main():
             st.markdown("**The control chart monitors the process stability over time. The X-bar chart shows the mean of the process, and the R chart displays the range of the process variation. These charts help identify any unusual variations in the process.**")
 
             kmeans = KMeans(n_clusters=3)
-            resampled_df['Cluster'] = kmeans.fit_pgreenict(resampled_df[[value_column]])
+            resampled_df['Cluster'] = kmeans.fit_predict(resampled_df[[value_column]])
             num_clusters = len(set(resampled_df['Cluster']))
 
             if num_clusters > 1:
@@ -402,7 +402,7 @@ def main():
             total_active_time = active_df.shape[0] * sampling_interval
             total_inactive_time = inactive_df.shape[0] * sampling_interval
 
-            r_squagreen = reg.score(X, y)
+            r_squared = reg.score(X, y)
 
             stats_output = f"""
             **Descriptive Statistics**
@@ -415,7 +415,7 @@ def main():
             - 75%: {stats['75%']:.2f}
             **Linear Regression**
             - Equation: y = {reg.coef_[0]:.2f}x + {reg.intercept_:.2f}
-            - R²: {r_squagreen:.2f}
+            - R²: {r_squared:.2f}
             **Activity Duration**
             - Total Active Time: {total_active_time} minutes
             - Total Inactive Time: {total_inactive_time} minutes
@@ -464,8 +464,8 @@ def main():
             degree = st.slider("Degree of Polynomial Regression", 1, 10, 2)
             poly_features = np.polyfit(X.flatten(), y, degree)
             poly_model = np.poly1d(poly_features)
-            y_poly_pgreen = poly_model(X.flatten())
-            fig.add_trace(go.Scatter(x=resampled_df.index, y=y_poly_pgreen[:len(resampled_df.index)], mode='lines', line=dict(color='purple', dash='dot'), name=f'Polynomial Regression (degree {degree})'))
+            y_poly_pred = poly_model(X.flatten())
+            fig.add_trace(go.Scatter(x=resampled_df.index, y=y_poly_pred[:len(resampled_df.index)], mode='lines', line=dict(color='purple', dash='dot'), name=f'Polynomial Regression (degree {degree})'))
             st.plotly_chart(fig)
 
             forecast_periods = st.number_input("Forecasting Period (days)", min_value=1, max_value=365, value=180)
@@ -480,7 +480,7 @@ def main():
                         fig_forecast.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat_upper'], fill='tonexty', mode='lines', line=dict(color='gray'), showlegend=False))
                         st.plotly_chart(fig_forecast)
                         logging.info("Forecast plot generated.")
-                        st.markdown("**The forecast plot shows the pgreenicted future values of the selected time series. The blue line represents the forecasted values, while the shaded area indicates the uncertainty intervals (upper and lower bounds). The forecast helps in understanding the potential future trends based on the historical data.**")
+                        st.markdown("**The forecast plot shows the predicted future values of the selected time series. The blue line represents the forecasted values, while the shaded area indicates the uncertainty intervals (upper and lower bounds). The forecast helps in understanding the potential future trends based on the historical data.**")
 
                         csv = forecast.to_csv(index=False)
                         b64 = base64.b64encode(csv.encode()).decode()
