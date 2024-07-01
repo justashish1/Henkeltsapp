@@ -348,11 +348,11 @@ def main():
             reg = LinearRegression().fit(X, y)
             y_pred = reg.predict(X)
 
-            fig.add_trace(go.Scatter(x=resampled_df.index, y=y_pred, mode='lines', line=dict(color='green', dash='dash'), name='Regression Line'))
+            fig.add_trace(go.Scatter(x=resampled_df.index, y=y_pred, mode='lines', line=dict(color='red', dash='dash'), name='Regression Line'))
 
             fig.update_layout(title='Time Series Data with Inactivity Periods, Anomalies, and Regression Line', xaxis_title='Timestamp', yaxis_title=value_column)
             st.plotly_chart(fig)
-            st.markdown("**The time series plot displays the data over time, with blue lines representing active periods, red lines indicating inactivity periods, and orange markers highlighting anomalies. The green dashed line shows the linear regression line, which helps identify the overall trend in the data.**")
+            st.markdown("**The time series plot displays the data over time, with blue lines representing active periods, red lines indicating inactivity periods, and orange markers highlighting anomalies. The red dashed line shows the linear regression line, which helps identify the overall trend in the data.**")
 
             box_fig = go.Figure()
             box_fig.add_trace(go.Box(y=resampled_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
@@ -367,7 +367,7 @@ def main():
             decomposition_fig = go.Figure()
             decomposition_fig.add_trace(go.Scatter(x=trend.index, y=trend, mode='lines', name='Trend', line=dict(color='blue')))
             decomposition_fig.add_trace(go.Scatter(x=seasonal.index, y=seasonal, mode='lines', name='Seasonality', line=dict(color='orange')))
-            decomposition_fig.add_trace(go.Scatter(x=resid.index, y=resid, mode='lines', name='Residuals', line=dict(color='green')))
+            decomposition_fig.add_trace(go.Scatter(x=resid.index, y=resid, mode='lines', name='Residuals', line=dict(color='red')))
             st.plotly_chart(decomposition_fig, use_container_width=True)
             st.markdown("**The time series decomposition plot breaks down the data into its trend, seasonal, and residual components. The trend component shows the long-term direction, the seasonal component captures repeating patterns, and the residual component represents random noise.**")
 
@@ -388,7 +388,7 @@ def main():
                 silhouette_avg = 'N/A'
 
             cluster_fig = go.Figure()
-            colors = ['blue', 'orange', 'green']
+            colors = ['blue', 'orange', 'red']
             for cluster in range(num_clusters):
                 cluster_data = resampled_df[resampled_df['Cluster'] == cluster]
                 cluster_fig.add_trace(go.Scatter(x=cluster_data.index, y=cluster_data[value_column], mode='markers', marker=dict(color=colors[cluster]), name=f'Cluster {cluster}'))
