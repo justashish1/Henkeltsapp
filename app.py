@@ -103,10 +103,10 @@ def custom_css():
                 border: none;
             }
             .stButton > button:hover {
-                background-color: #28a745;
+                background-color: #32c800;
             }
             .custom-error {
-                background-color: #ff4c4c;
+                background-color: #FF0000;
                 color: white;
                 padding: 10px;
                 border-radius: 5px;
