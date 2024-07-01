@@ -22,7 +22,7 @@ logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s 
 logging.info('Application started')
 
 # Set the page configuration
-st.set_page_config(page_title="HENKEL Timeseries Analysis Application", layout="wide")
+st.set_page_config(page_title="Starengts Timeseries Analysis Application", layout="wide")
 
 # Generate time options
 def generate_time_options():
@@ -36,7 +36,9 @@ def load_logo(filename):
  # Developer info at the bottom right
 st.markdown("""
         <div class='developer-info'>
-            ashish Malviya<br>
+            Developer Name : ashish Malviya<br>
+            Email ID : info@starengts.com<br>
+            www.starengts.com
         </div>
     """, unsafe_allow_html=True    )
 
@@ -47,7 +49,7 @@ def custom_css():
         <style>
             .main-title {
                 font-size: 25px;
-                color: #FF0000;
+                color: #32c800;
                 text-align: center;
                 font-weight: bold;
             }
@@ -70,13 +72,13 @@ def custom_css():
                 position: relative;
                 top: 5px;
                 left: 10px;
-                color: #FF0000;
+                color: #32c800;
             }
             .center-text {
                 text-align: center;
             }
             .logo {
-                height: 45px;
+                height: 35px;
                 display: inline-block;
                 margin-left: auto;
                 margin-right: 10px;
@@ -87,7 +89,7 @@ def custom_css():
                 margin-bottom: 20px;
                 display: flex;
                 justify-content: space-between;
-                color: #FF0000;
+                color: #32c800;
                 align-items: center;
             }
             .developer-info {
@@ -99,23 +101,21 @@ def custom_css():
                 font-size: 12px;
             }
             .stProgress > div > div > div > div {
-                background-color: #FF0000;
+                background-color: #32c800;
             }
             .content {
                 padding-top: 0px;
             }
             .stButton > button {
-                background-color: #FF0000;
-                color: white;
+                background-color: #32c800;
                 border: none;
                 font-weight: bold;
             }
             .stButton > button:hover {
-                color: white;
-                background-color: #FF0000;
+                background-color: #28a745;
             }
             .custom-error {
-                background-color: #FF0000;
+                background-color: #ff4c4c;
                 color: white;
                 padding: 10px;
                 border-radius: 5px;
@@ -247,7 +247,7 @@ def main():
     logo_src = load_logo('logo.png')
     display_logo_and_time(logo_src)
     add_js_script()
-    st.markdown("<h1 class='main-title'>HENKEL TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>STARENGTS TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
@@ -258,7 +258,7 @@ def main():
         if st.button("Login"):
             authenticate(username, password)
             if st.session_state.authenticated:
-                st.experimental_rerun()
+                st.rerun()
         st.stop()
 
     uploaded_file = st.file_uploader("Upload a CSV or Excel file", type=["csv", "xlsx"], label_visibility="visible", help="Upload a file in CSV or Excel format")
@@ -268,7 +268,7 @@ def main():
         st.markdown("""
             <style>
                 .stProgress > div > div > div > div {
-                    background-color: #FF0000;
+                    background-color: #32c800;
                 }
             </style>
         """, unsafe_allow_html=True)
@@ -524,7 +524,9 @@ def main():
     # Developer info at the bottom right
     st.markdown("""
         <div class='developer-info'>
-            ashish Malviya<br>
+            Developer Name : ashish Malviya<br>
+            Email ID: info@starengts.com<br>
+            www.starengts.com
         </div>
     """, unsafe_allow_html=True)
 
