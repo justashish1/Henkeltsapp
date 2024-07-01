@@ -26,7 +26,8 @@ st.set_page_config(page_title="HENKEL Timeseries Analysis Application", layout="
 
 # Generate time options
 def generate_time_options():
-    return [f"{hour:02d}:{minute:02d}:{second:02d}" for hour in range(24) for minute in range(60) for second in range(60)]
+    return [f"{hour % 12 if hour % 12 else 12:02d}:{minute:02d}:{second:02d} {'AM' if hour < 12 else 'PM'}"
+            for hour in range(24) for minute in range(60) for second in range(60)]
 
 # Load logo as base64
 def load_logo(filename):
@@ -140,7 +141,7 @@ def custom_css():
 
 # Get the current time as a string for the clock
 def get_time():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.now().strftime('%Y-%m-%d %I:%M:%S %p')
 
 # Display the logo and time
 def display_logo_and_time(logo_src):
@@ -159,12 +160,16 @@ def add_js_script():
         document.addEventListener('DOMContentLoaded', (event) => {
             function updateTime() {
                 var now = new Date();
+                var hours = now.getHours() % 12 || 12;
+                var minutes = now.getMinutes();
+                var seconds = now.getSeconds();
+                var ampm = now.getHours() >= 12 ? 'PM' : 'AM';
                 var timeString = now.getFullYear() + '-' + 
-                                 ('0' + (now.getMonth()+1)).slice(-2) + '-' + 
+                                 ('0' + (now.getMonth() + 1)).slice(-2) + '-' + 
                                  ('0' + now.getDate()).slice(-2) + ' ' + 
-                                 ('0' + now.getHours()).slice(-2) + ':' + 
-                                 ('0' + now.getMinutes()).slice(-2) + ':' + 
-                                 ('0' + now.getSeconds()).slice(-2);
+                                 ('0' + hours).slice(-2) + ':' + 
+                                 ('0' + minutes).slice(-2) + ':' + 
+                                 ('0' + seconds).slice(-2) + ' ' + ampm;
                 document.getElementById('current-time').innerHTML = timeString;
             }
             setInterval(updateTime, 1000);
@@ -303,11 +308,11 @@ def main():
 
             with col3:
                 time_options = generate_time_options()
-                start_time_index = time_options.index(df.index.min().strftime('%H:%M:%S'))
+                start_time_index = time_options.index(df.index.min().strftime('%I:%M:%S %p'))
                 start_time_str = st.selectbox("Start Time", time_options, index=start_time_index)
 
             with col4:
-                end_time_index = time_options.index(df.index.max().strftime('%H:%M:%S'))
+                end_time_index = time_options.index(df.index.max().strftime('%I:%M:%S %p'))
                 end_time_str = st.selectbox("End Time", time_options, index=end_time_index)
 
             with col5:
@@ -320,7 +325,10 @@ def main():
             
             # Row 1: Full-width Head
             st.markdown("<div class='df-overview-section'style='font-size:14px;'>Head</div>", unsafe_allow_html=True)
-            st.write(df.head())
+            # Ensure datetime values display with AM/PM
+            df_display = df.head().copy()
+            df_display.index = df_display.index.strftime('%Y-%m-%d %I:%M:%S %p')
+            st.write(df_display)
 
             # Row 2: Full-width Info
             st.markdown("<div class='df-overview-section'style='font-size:14px;'>Info</div>", unsafe_allow_html=True)
@@ -344,8 +352,8 @@ def main():
                 selected_values = st.multiselect(f"Filter by {col}", unique_values, default=unique_values)
                 df = df[df[col].isin(selected_values)]
 
-            start_datetime = datetime.strptime(f"{start_date} {start_time_str}", '%Y-%m-%d %H:%M:%S')
-            end_datetime = datetime.strptime(f"{end_date} {end_time_str}", '%Y-%m-%d %H:%M:%S')
+            start_datetime = datetime.strptime(f"{start_date} {start_time_str}", '%Y-%m-%d %I:%M:%S %p')
+            end_datetime = datetime.strptime(f"{end_date} {end_time_str}", '%Y-%m-%d %I:%M:%S %p')
             mask = (df.index >= start_datetime) & (df.index <= end_datetime)
             filtered_df = df.loc[mask]
             resampled_df = get_resampled_df(filtered_df, sampling_interval)
