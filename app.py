@@ -1,183 +1,239 @@
-import streamlit as st
-import pandas as pd
-import base64
-import numpy as np
-from datetime import datetime
-from sklearn.linear_model import LinearRegression
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
-from statsmodels.tsa.seasonal import seasonal_decompose
-from sklearn.ensemble import IsolationForest
-from prophet import Prophet
-import plotly.graph_objects as go
-import plotly.express as px
-import seaborn as sns
-import logging
-from st_aggrid import AgGrid, GridOptionsBuilder
+    import streamlit as st
+    import pandas as pd
+    import base64
+    import numpy as np
+    import time
+    from datetime import datetime
+    from sklearn.linear_model import LinearRegression
+    from sklearn.cluster import KMeans
+    from sklearn.metrics import silhouette_score
+    from statsmodels.tsa.seasonal import seasonal_decompose
+    from sklearn.ensemble import IsolationForest
+    from prophet import Prophet
+    import plotly.graph_objects as go
+    import plotly.express as px
+    import seaborn as sns
+    import logging
+    from st_aggrid import AgGrid, GridOptionsBuilder
+    import io
 
-# Set up logging
-logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
-logging.info('Application started')
+    # Set up logging
+    logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
+    logging.info('Application started')
 
-# Set the page configuration
-st.set_page_config(page_title="Henkel Timeseries Analysis Application", layout="wide")
+    # Set the page configuration
+    st.set_page_config(page_title="Henkel Timeseries Analysis Application", layout="wide")
 
-# Generate time options
-def generate_time_options():
-    return [f"{hour:02d}:{minute:02d}:00" for hour in range(24) for minute in range(60)]
+    # Generate time options
+    def generate_time_options():
+        return [f"{hour:02d}:{minute:02d}:00" for hour in range(24) for minute in range(60)]
 
-# Load logo as base64
-def load_logo(filename):
-    with open(filename, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode()
-    return f"data:image/png;base64,{encoded_image}"
+    # Load logo as base64
+    def load_logo(filename):
+        with open(filename, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode()
+        return f"data:image/png;base64,{encoded_image}"
 
-# Custom CSS for styling
-def custom_css():
-    st.markdown("""
-        <style>
-            .main-title {
-                font-size: 25px;
-                color: red;
-                text-align: center;
-                font-weight: bold;
-            }
-            .current-time {
-                font-size: 18px;
-                font-weight: bold;
-                display: inline-block;
-                margin-right: 20px;
-            }
-            .upload-button {
-                width: 30%;
-                height: 50px;
-                line-height: 50px;
-                border-width: 1px;
-                border-style: dashed;
-                border-radius: 5px;
-                text-align: center;
-                margin-bottom: 5px;
-                font-size: 10px;
-                position: relative;
-                top: 5px;
-                left: 10px;
-            }
-            .center-text {
-                text-align: center;
-            }
-            .logo {
-                height: 50px;
-                display: inline-block;
-                margin-left: auto;
-                margin-right: 10px;
-            }
-            .header {
-                position: relative;
-                width: 100%;
-                margin-bottom: 20px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center.
-            }
-        </style>
-    """, unsafe_allow_html=True)
+    # Custom CSS for styling
+    def custom_css():
+        st.markdown("""
+            <style>
+                .main-title {
+                    font-size: 20px;
+                    color: #32c800;
+                    text-align: center;
+                    font-weight: bold;
+                }
+                .current-time {
+                    font-size: 12px;
+                    font-weight: bold;
+                    display: inline-block;
+                    margin-right: 20px;
+                }
+                .developer-info {
+                    font-size: 12px;
+                    font-weight: bold;
+                    text-align: left;
+                    color: #32c800;
+                }
+                .upload-button {
+                    width: 30%;
+                    height: 50px;
+                    line-height: 50px;
+                    border-width: 1px;
+                    border-style: dashed;
+                    border-radius: 5px;
+                    text-align: center;
+                    margin-bottom: 5px;
+                    font-size: 10px;
+                    position: relative;
+                    top: 5px;
+                    left: 10px;
+                    color: #32c800;
+                }
+                .center-text {
+                    text-align: center;
+                }
+                .logo {
+                    height: 35px;
+                    display: inline-block;
+                    margin-left: auto;
+                    margin-right: 10px;
+                }
+                .header {
+                    position: relative;
+                    width: 100%;
+                    margin-bottom: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                    color: #32c800;
+                    align-items: center;
+                }
+                .stProgress > div > div > div > div {
+                    background-color: #32c800;
+                }
+                .content {
+                    padding-top: 0px;
+                }
+                .stButton > button {
+                    background-color: #32c800;
+                    border: none;
+                }
+                .stButton > button:hover {
+                    background-color: #28a745;
+                }
+                .custom-error {
+                    background-color: #ff4c4c;
+                    color: white;
+                    padding: 10px;
+                    border-radius: 5px;
+                    text-align: center;
+                    font-weight: bold;
+                }
+                .df-overview-title {
+                    font-size: 14px;
+                    color: #32c800;
+                    font-weight: bold;
+                }
+            </style>
+        """, unsafe_allow_html=True)
 
-# Get the current time as a string
-def get_time():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    # Get the current time as a string
+    def get_time():
+        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-# Display the logo and time
-def display_logo_and_time(logo_src):
-    current_time_html = f"""
-        <div class='header'>
-            <div class='current-time' id='current-time'>{get_time()}</div>
-            <img src='{logo_src}' class='logo'>
-        </div>
-    """
-    st.markdown(current_time_html, unsafe_allow_html=True)
+    # Display the logo and time
+    def display_logo_and_time(logo_src):
+        current_time_html = f"""
+            <div class='header'>
+                <div>
+                    <div class='current-time' id='current-time'>{get_time()}</div>
+                    <div class='developer-info'>Ashish Malviya<br>info@Henkel.com<br>www.Henkel.com</div>
+                </div>
+                <img src='{logo_src}' class='logo'>
+            </div>
+        """
+        st.markdown(current_time_html, unsafe_allow_html=True)
 
-# Add JavaScript for live clock
-def add_js_script():
-    st.markdown("""
-        <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            function updateTime() {
-                var now = new Date();
-                var timeString = now.getFullYear() + '-' + 
-                                 ('0' + (now.getMonth()+1)).slice(-2) + '-' + 
-                                 ('0' + now.getDate()).slice(-2) + ' ' + 
-                                 ('0' + now.getHours()).slice(-2) + ':' + 
-                                 ('0' + now.getMinutes()).slice(-2) + ':' + 
-                                 ('0' + now.getSeconds()).slice(-2);
-                document.getElementById('current-time').innerHTML = timeString;
-            }
-            setInterval(updateTime, 1000);
-        });
-        </script>
-    """, unsafe_allow_html=True)
+    # Add JavaScript for live clock
+    def add_js_script():
+        st.markdown("""
+            <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                function updateTime() {
+                    var now = new Date();
+                    var timeString = now.getFullYear() + '-' + 
+                                    ('0' + (now.getMonth()+1)).slice(-2) + '-' + 
+                                    ('0' + now.getDate()).slice(-2) + ' ' + 
+                                    ('0' + now.getHours()).slice(-2) + ':' + 
+                                    ('0' + now.getMinutes()).slice(-2) + ':' + 
+                                    ('0' + now.getSeconds()).slice(-2);
+                    document.getElementById('current-time').innerHTML = timeString;
+                }
+                setInterval(updateTime, 1000);
+            });
+            </script>
+        """, unsafe_allow_html=True)
 
-# Authenticate user
-def authenticate(username, password):
-    if username == "admin" and password == "password":
-        st.session_state.authenticated = True
-    else:
-        st.error("Invalid username or password")
+    # Authenticate user
+    def authenticate(username, password):
+        if username == "admin" and password == "password106":
+            st.session_state.authenticated = True
+        else:
+            st.error("Invalid username or password")
 
-# Load data from uploaded file
-@st.cache_data
-def load_data(uploaded_file):
-    if uploaded_file.name.endswith('.xlsx'):
-        return pd.read_excel(uploaded_file)
-    else:
-        return pd.read_csv(uploaded_file)
+    # Load data from uploaded file
+    @st.cache_data
+    def load_data(uploaded_file):
+        if uploaded_file.name.endswith('.xlsx'):
+            return pd.read_excel(uploaded_file)
+        else:
+            return pd.read_csv(uploaded_file)
 
-# Preprocess data
-@st.cache_data
-def preprocess_data(df):
-    if 'Timestamp' in df.columns:
-        df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
-        df = df.dropna(subset=['Timestamp'])
-        df.set_index('Timestamp', inplace=True)
-    return df
+    # Preprocess data
+    @st.cache_data
+    def preprocess_data(df):
+        if 'Timestamp' in df.columns:
+            df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
+            df = df.dropna(subset=['Timestamp'])
+            df.set_index('Timestamp', inplace=True)
+        return df
 
-# Resample dataframe
-@st.cache_data
-def get_resampled_df(filtered_df, sampling_interval):
-    return filtered_df.resample(f'{sampling_interval}min').mean().fillna(0)
+    # Validate 'Timestamp' column and format
+    def validate_timestamp_column(df):
+        if 'Timestamp' not in df.columns:
+            st.markdown('<div class="custom-error">The uploaded file does not contain a \'Timestamp\' column The correct column name is Timestamp and format is YYYY-MM-DD HH:MM:SS.</div>', unsafe_allow_html=True)
+            logging.error("The uploaded file does not contain a 'Timestamp' column, The correct column name is Timestamp and format is YYYY-MM-DD HH:MM:SS")
+            st.write("### Debugging Information")
+            st.write(df.head())  # Display the first few rows of the dataframe for debugging
+            return False
+        try:
+            pd.to_datetime(df['Timestamp'], format='%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            st.markdown('<div class="custom-error">The \'Timestamp\' column is not in the correct datetime format (YYYY-MM-DD HH:MM:SS).</div>', unsafe_allow_html=True)
+            logging.error("The 'Timestamp' column is not in the correct datetime format (YYYY-MM-DD HH:MM:SS).")
+            st.write("### Debugging Information")
+            st.write(df.head())  # Display the first few rows of the dataframe for debugging
+            return False
+        return True
 
-# Generate forecast using Prophet
-def generate_forecast(df, value_column, periods):
-    df.reset_index(inplace=True)
-    df.rename(columns={'Timestamp': 'ds', value_column: 'y'}, inplace=True)
-    model = Prophet(daily_seasonality=True)
-    model.fit(df)
-    future = model.make_future_dataframe(periods=periods)
-    forecast = model.predict(future)
-    return forecast
+    # Resample dataframe
+    @st.cache_data
+    def get_resampled_df(filtered_df, sampling_interval):
+        return filtered_df.resample(f'{sampling_interval}min').mean().fillna(0)
 
-# Display data using st-aggrid
-def display_aggrid(df):
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_pagination(paginationAutoPageSize=True) # Add pagination
-    gb.configure_side_bar() # Add a sidebar
-    gridOptions = gb.build()
-    AgGrid(
-        df,
-        gridOptions=gridOptions,
-        enable_enterprise_modules=True,
-        height=400,
-        width='100%',
-        fit_columns_on_grid_load=True
-    )
+    # Generate forecast using Prophet
+    def generate_forecast(df, value_column, periods):
+        df.reset_index(inplace=True)
+        df.rename(columns={'Timestamp': 'ds', value_column: 'y'}, inplace=True)
+        model = Prophet(daily_seasonality=True)
+        model.fit(df)
+        future = model.make_future_dataframe(periods=periods)
+        forecast = model.predict(future)
+        return forecast
 
-# Main function
-def main():
-    try:
+    # Display data using st-aggrid
+    def display_aggrid(df):
+        gb = GridOptionsBuilder.from_dataframe(df)
+        gb.configure_pagination(paginationAutoPageSize=True) # Add pagination
+        gb.configure_side_bar() # Add a sidebar
+        gridOptions = gb.build()
+        AgGrid(
+            df,
+            gridOptions=gridOptions,
+            enable_enterprise_modules=True,
+            height=400,
+            width='100%',
+            fit_columns_on_grid_load=True
+        )
+
+    # Main function
+    def main():
         custom_css()
         logo_src = load_logo('logo.png')
         display_logo_and_time(logo_src)
         add_js_script()
-        st.markdown("<h1 class='main-title'>HENKEL TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 class='main-title'>Henkel TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
         if 'authenticated' not in st.session_state:
             st.session_state.authenticated = False
@@ -187,41 +243,54 @@ def main():
             password = st.text_input("Password", type="password")
             if st.button("Login"):
                 authenticate(username, password)
+                if st.session_state.authenticated:
+                    st.experimental_rerun()
             st.stop()
 
         uploaded_file = st.file_uploader("Upload a CSV or Excel file", type=["csv", "xlsx"], label_visibility="visible", help="Upload a file in CSV or Excel format")
 
         if uploaded_file:
+            # Removing redundant progress bar
+            st.markdown("""
+                <style>
+                    .stProgress > div > div > div > div {
+                        background-color: #32c800;
+                    }
+                </style>
+            """, unsafe_allow_html=True)
+            
+            progress_bar = st.progress(0)
             start_time = datetime.now()
+            for i in range(100):
+                time.sleep(0.01)
+                progress_bar.progress(i + 1)
             df = load_data(uploaded_file)
             process_end_time = datetime.now()
             loading_time = (process_end_time - start_time).total_seconds()
             st.write(f"Loaded file: {uploaded_file.name} (Total processing time: {loading_time:.2f} seconds)")
             logging.info(f"Loaded file: {uploaded_file.name} (Total processing time: {loading_time:.2f} seconds)")
 
+            if not validate_timestamp_column(df):
+                return
+
             df = preprocess_data(df)
 
             if not df.empty:
-                min_date = df.index.min().date()
-                max_date = df.index.max().date()
-                min_time = df.index.min().strftime('%H:%M:%S')
-                max_time = df.index.max().strftime('%H:%M:%S')
-
                 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
                 with col1:
-                    start_date = st.date_input("Start Date", min_value=min_date, max_value=max_date, value=min_date)
+                    start_date = st.date_input("Start Date", min_value=df.index.min().date(), max_value=df.index.max().date(), value=df.index.min().date())
 
                 with col2:
-                    end_date = st.date_input("End Date", min_value=min_date, max_value=max_date, value=max_date)
+                    end_date = st.date_input("End Date", min_value=df.index.min().date(), max_value=df.index.max().date(), value=df.index.max().date())
 
                 with col3:
                     time_options = generate_time_options()
-                    start_time_index = time_options.index(min_time)
+                    start_time_index = time_options.index(df.index.min().strftime('%H:%M:%S'))
                     start_time_str = st.selectbox("Start Time", time_options, index=start_time_index)
 
                 with col4:
-                    end_time_index = time_options.index(max_time)
+                    end_time_index = time_options.index(df.index.max().strftime('%H:%M:%S'))
                     end_time_str = st.selectbox("End Time", time_options, index=end_time_index)
 
                 with col5:
@@ -229,6 +298,27 @@ def main():
 
                 with col6:
                     sampling_interval = st.slider("Sampling Interval (minutes)", 1, 60, 1)
+
+                st.markdown("<h2 class='df-overview-title'>DataFrame Overview</h2>", unsafe_allow_html=True)
+                
+                st.markdown("### Head")
+                st.write(df.head())
+
+                st.markdown("### Info")
+                buffer = io.StringIO()
+                df.info(buf=buffer)
+                s = buffer.getvalue()
+                st.text(s)
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.markdown("### Shape")
+                    st.write(df.shape)
+
+                with col2:
+                    st.markdown("### Size")
+                    st.write(df.size)
 
                 for col in df.select_dtypes(include=['category', 'object']).columns:
                     unique_values = df[col].unique()
@@ -384,6 +474,17 @@ def main():
 
                 forecast_periods = st.number_input("Forecasting Period (days)", min_value=1, max_value=365, value=180)
 
+                forecast_future_button = st.markdown("""
+                    <style>
+                    .stButton > button {
+                        background-color: #32c800;
+                        border: none;
+                        color: black;
+                        font-weight: bold;
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
+
                 if st.button("Forecast Future"):
                     with st.spinner('Forecasting...'):
                         try:
@@ -405,16 +506,15 @@ def main():
                             st.error(f"Forecasting failed: {e}")
                             logging.error(f"Forecasting failed: {e}")
 
+                st.markdown('</div>', unsafe_allow_html=True)
             else:
-                st.error("The uploaded file does not contain a 'Timestamp' column.")
-                logging.error("The uploaded file does not contain a 'Timestamp' column.")
+                st.markdown('<div class="custom-error">The uploaded file does not contain a \'Timestamp\' column.</div>', unsafe_allow_html=True)
+                st.write("### Debugging Information")
+                st.write(df.head())  # Display the first few rows of the dataframe for debugging
+                logging.error("The uploaded file does not contain a 'Timestamp' column,The correct column name is Timestamp and format is YYYY-MM-DD HH:MM:SS.")
         else:
             st.write("Please upload a CSV or Excel file to get started.")
             logging.info("Waiting for file upload.")
 
-    except Exception as e:
-        logging.error("An error occurred: %s", e)
-        st.error(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    main()
+    if __name__ == "__main__":
+        main()
