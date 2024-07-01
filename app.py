@@ -229,7 +229,7 @@ def generate_forecast(df, value_column, periods):
     forecast = model.predict(future)
     return forecast
 
-# Display data using st-aggrid
+# Display data using streamlit-aggrid
 def display_aggrid(df):
     gb = GridOptionsBuilder.from_dataframe(df)
     gb.configure_pagination(paginationAutoPageSize=True) # Add pagination
