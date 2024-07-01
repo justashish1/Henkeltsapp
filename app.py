@@ -135,9 +135,9 @@ def custom_css():
         </style>
     """, unsafe_allow_html=True)
 
-# Get the current time as a string for the clock
+# Get the current time as a string
 def get_time():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return datetime.now().strftime('%d/%m/%Y %I:%M:%S.%f %p')
 
 # Display the logo and time
 def display_logo_and_time(logo_src):
@@ -156,12 +156,7 @@ def add_js_script():
         document.addEventListener('DOMContentLoaded', (event) => {
             function updateTime() {
                 var now = new Date();
-                var timeString = now.getFullYear() + '-' + 
-                                 ('0' + (now.getMonth()+1)).slice(-2) + '-' + 
-                                 ('0' + now.getDate()).slice(-2) + ' ' + 
-                                 ('0' + now.getHours()).slice(-2) + ':' + 
-                                 ('0' + now.getMinutes()).slice(-2) + ':' + 
-                                 ('0' + now.getSeconds()).slice(-2);
+                var timeString = now.toLocaleString('en-GB', { timeZone: 'UTC', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 });
                 document.getElementById('current-time').innerHTML = timeString;
             }
             setInterval(updateTime, 1000);
@@ -370,7 +365,7 @@ def main():
 
             fig.add_trace(go.Scatter(x=resampled_df.index, y=y_pred, mode='lines', line=dict(color='green', dash='dash'), name='Regression Line'))
 
-            fig.update_layout(title='Time Series Data with Inactivity Periods, Anomalies, and Regression Line', xaxis_title='DateTime', yaxis_title=value_column)
+            fig.update_layout(title='Time Series Data with Inactivity Periods, Anomalies, and Regression Line', xaxis_title='Timestamp', yaxis_title=value_column)
             st.plotly_chart(fig)
             st.markdown("**The time series plot displays the data over time, with blue lines representing active periods, red lines indicating inactivity periods, and orange markers highlighting anomalies. The green dashed line shows the linear regression line, which helps identify the overall trend in the data.**")
 
@@ -394,7 +389,7 @@ def main():
             control_chart_fig = go.Figure()
             control_chart_fig.add_trace(go.Scatter(x=resampled_df.index, y=resampled_df[value_column], mode='lines', name='Load cell Value', line=dict(color='blue')))
             control_chart_fig.add_trace(go.Scatter(x=resampled_df.index, y=resampled_df[value_column].rolling(window=30).std(), mode='lines', name='Rolling Std', line=dict(color='orange'), yaxis='y2'))
-            control_chart_fig.update_layout(title='Control Charts (X-bar and R charts)', xaxis_title='DateTime', yaxis=dict(title=value_column), yaxis2=dict(title='Standard Deviation', overlaying='y', side='right'))
+            control_chart_fig.update_layout(title='Control Charts (X-bar and R charts)', xaxis_title='Timestamp', yaxis=dict(title=value_column), yaxis2=dict(title='Standard Deviation', overlaying='y', side='right'))
             st.plotly_chart(control_chart_fig, use_container_width=True)
             st.markdown("**The control chart monitors the process stability over time. The X-bar chart shows the mean of the process, and the R chart displays the range of the process variation. These charts help identify any unusual variations in the process.**")
 
@@ -413,7 +408,7 @@ def main():
                 cluster_data = resampled_df[resampled_df['Cluster'] == cluster]
                 cluster_fig.add_trace(go.Scatter(x=cluster_data.index, y=cluster_data[value_column], mode='markers', marker=dict(color=colors[cluster]), name=f'Cluster {cluster}'))
 
-            cluster_fig.update_layout(title=f'KMeans Clustering (Silhouette Score: {silhouette_avg})', xaxis_title='DateTime', yaxis_title=value_column)
+            cluster_fig.update_layout(title=f'KMeans Clustering (Silhouette Score: {silhouette_avg})', xaxis_title='Timestamp', yaxis_title=value_column)
             st.plotly_chart(cluster_fig, use_container_width=True)
             st.markdown("**The clustering plot uses KMeans to group the data into clusters. Each color represents a different cluster, helping to identify patterns and similarities within the data. The silhouette score indicates how well the data points fit within their clusters, with higher values representing better clustering.**")
 
@@ -516,7 +511,7 @@ def main():
             st.markdown('<div class="custom-error">The uploaded file does not contain a \'DateTime\' column.</div>', unsafe_allow_html=True)
             st.write("### Debugging Information")
             st.write(df.head())  # Display the first few rows of the dataframe for debugging
-            logging.error("The uploaded file does not contain a 'DateTime' column,The correct column name is DateTime and format is DD/MM/YYYY hh:mm:ss.SSS AM/PM.")
+            logging.error("The uploaded file does not contain a 'DateTime' column, The correct column name is DateTime and format is DD/MM/YYYY hh:mm:ss.SSS AM/PM.")
     else:
         st.write("Please upload a CSV or Excel file to get started.")
         logging.info("Waiting for file upload.")
