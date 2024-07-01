@@ -23,7 +23,7 @@ logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s 
 logging.info('Application started')
 
 # Set the page configuration
-st.set_page_config(page_title="Starengts Timeseries Analysis Application", layout="wide")
+st.set_page_config(page_title="Henkel Timeseries Analysis Application", layout="wide")
 
 # Generate time options
 def generate_time_options():
@@ -229,7 +229,7 @@ def main():
     logo_src = load_logo('logo.png')
     display_logo_and_time(logo_src)
     add_js_script()
-    st.markdown("<h1 class='main-title'>STARENGTS TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>Henkel TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
