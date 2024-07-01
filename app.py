@@ -106,14 +106,16 @@ def custom_css():
             }
             .stButton > button {
                 background-color: #FF0000;
+                color: white;
                 border: none;
                 font-weight: bold;
             }
             .stButton > button:hover {
+                color: white;
                 background-color: #FF0000;
             }
             .custom-error {
-                background-color: #ff4c4c;
+                background-color: #FF0000;
                 color: white;
                 padding: 10px;
                 border-radius: 5px;
