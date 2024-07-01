@@ -229,7 +229,7 @@ def main():
     logo_src = load_logo('logo.png')
     display_logo_and_time(logo_src)
     add_js_script()
-    st.markdown("<h1 class='main-title'>Henkel TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>HENKEL TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
