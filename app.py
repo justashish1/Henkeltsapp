@@ -132,7 +132,7 @@ def custom_css():
             .df-overview-section {
                 font-size: 12px;
                 font-weight: bold;
-                color: black.
+                color: black;
             }
             .df-shape-size {
                 color: black;
@@ -148,7 +148,7 @@ def custom_css():
             }
             .histogram, .user-annotations, .advanced-analytics, .correlation-heatmap, .pair-plot {
                 font-size: 18px;
-                font-weight: bold.
+                font-weight: bold;
             }
             .outlier-treatment {
                 font-size: 18px;
@@ -440,18 +440,21 @@ def main():
             # Outlier treatment selection
             st.markdown("<div class='outlier-treatment'>Outlier Treatment</div>", unsafe_allow_html=True)
             outlier_treatment = st.radio("Do you want to treat outliers?", ("No", "Yes"))
+            outlier_placeholder = st.empty()
 
             if outlier_treatment == "Yes":
                 st.markdown("**Yes- Data Outliers will be treated**")
                 treated_df = treat_outliers(resampled_df, value_column)
                 # Second box plot after outlier treatment
-                treated_box_fig = go.Figure()
-                treated_box_fig.add_trace(go.Box(y=treated_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
-                st.plotly_chart(treated_box_fig)
-                st.markdown("**The second box plot visualizes the distribution of the data after outlier treatment.**")
+                with outlier_placeholder:
+                    treated_box_fig = go.Figure()
+                    treated_box_fig.add_trace(go.Box(y=treated_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
+                    st.plotly_chart(treated_box_fig)
+                    st.markdown("**The second box plot visualizes the distribution of the data after outlier treatment.**")
             else:
                 st.markdown("**No- Data Outliers will not be treated**")
                 treated_df = resampled_df
+                outlier_placeholder.empty()
 
             # Continue with analysis and plots using treated_df
 
