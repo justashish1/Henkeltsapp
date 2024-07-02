@@ -150,6 +150,12 @@ def custom_css():
                 font-size: 18px;
                 font-weight: bold;
             }
+            .outlier-treatment {
+                font-size: 18px;
+                font-weight: bold;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
         </style>
     """, unsafe_allow_html=True)
 
@@ -429,7 +435,7 @@ def main():
             st.markdown("**The box plot visualizes the distribution of the selected data. It displays the median (line inside the box), the interquartile range (the box), and potential outliers (points outside the whiskers). The box plot helps identify the central tendency and variability of the data.**")
 
             # Outlier treatment selection
-            st.markdown("### Outlier Treatment")
+            st.markdown("<div class='outlier-treatment'>Outlier Treatment</div>", unsafe_allow_html=True)
             outlier_treatment = st.radio("Do you want to treat outliers?", ("No", "Yes"))
 
             if outlier_treatment == "Yes":
