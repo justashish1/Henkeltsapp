@@ -132,7 +132,7 @@ def custom_css():
             .df-overview-section {
                 font-size: 12px;
                 font-weight: bold;
-                color: black;
+                color: black.
             }
             .df-shape-size {
                 color: black;
@@ -148,7 +148,7 @@ def custom_css():
             }
             .histogram, .user-annotations, .advanced-analytics, .correlation-heatmap, .pair-plot {
                 font-size: 18px;
-                font-weight: bold;
+                font-weight: bold.
             }
             .outlier-treatment {
                 font-size: 18px;
