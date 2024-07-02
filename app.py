@@ -539,8 +539,9 @@ def main():
             st.markdown("**The histogram visualizes the distribution of the data for each numeric column in the dataset.**")
 
             st.markdown("<div class='pair-plot'>Pair Plot</div>", unsafe_allow_html=True)
-            pair_plot_fig = sns.pairplot(df.select_dtypes(include=[np.number]), diag_kind='kde')
-            st.pyplot(pair_plot_fig)
+            fig_pair_plot = px.scatter_matrix(df.select_dtypes(include=[np.number]))
+            fig_pair_plot.update_traces(diagonal_visible=False, showupperhalf=True, marker=dict(color="blue", line=dict(color="white", width=0.5)))
+            st.plotly_chart(fig_pair_plot)
             logging.info("Pair plot generated.")
             st.markdown("**The pair plot displays pairwise relationships in the dataset, showing scatter plots for each pair of features and histograms for individual features.**")
 
