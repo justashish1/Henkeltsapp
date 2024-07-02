@@ -156,6 +156,9 @@ def custom_css():
                 margin-top: 20px;
                 margin-bottom: 20px;
             }
+            .spacing {
+                margin-top: 50px;
+            }
         </style>
     """, unsafe_allow_html=True)
 
@@ -433,6 +436,9 @@ def main():
             box_fig.add_trace(go.Box(y=resampled_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
             st.plotly_chart(box_fig)
             st.markdown("**The box plot visualizes the distribution of the selected data. It displays the median (line inside the box), the interquartile range (the box), and potential outliers (points outside the whiskers). The box plot helps identify the central tendency and variability of the data.**")
+
+            # Adding spacing before the radio button
+            st.markdown("<div class='spacing'></div>", unsafe_allow_html=True)
 
             # Outlier treatment selection
             st.markdown("<div class='outlier-treatment'>Outlier Treatment</div>", unsafe_allow_html=True)
