@@ -39,7 +39,7 @@ def load_logo(filename):
 # Developer info at the bottom left
 st.markdown("""
         <div class='developer-info'>
-            Developer Name : Ashish Malviya Rev 1.0.10<br>
+            Developer Name : Ashish Malviya<br>
         </div>
     """, unsafe_allow_html=True)
 
@@ -422,23 +422,29 @@ def main():
             st.plotly_chart(fig)
             st.markdown("**The time series plot displays the data over time, with blue lines representing active periods, red lines indicating inactivity periods, and orange markers highlighting anomalies. The green dashed line shows the linear regression line, which helps identify the overall trend in the data.**")
 
+            # Initial box plot
+            box_fig = go.Figure()
+            box_fig.add_trace(go.Box(y=resampled_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
+            st.plotly_chart(box_fig)
+            st.markdown("**The box plot visualizes the distribution of the selected data. It displays the median (line inside the box), the interquartile range (the box), and potential outliers (points outside the whiskers). The box plot helps identify the central tendency and variability of the data.**")
+
             # Outlier treatment selection
             st.markdown("### Outlier Treatment")
             outlier_treatment = st.radio("Do you want to treat outliers?", ("No", "Yes"))
 
             if outlier_treatment == "Yes":
-                st.markdown("Outliers will be removed from the dataset.")
+                st.markdown("**Yes- Data Outliers will be treated**")
                 treated_df = treat_outliers(resampled_df, value_column)
-                st.write("Outliers removed. Treated dataset overview:")
-                st.write(treated_df.describe())
+                # Second box plot after outlier treatment
+                treated_box_fig = go.Figure()
+                treated_box_fig.add_trace(go.Box(y=treated_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
+                st.plotly_chart(treated_box_fig)
+                st.markdown("**The second box plot visualizes the distribution of the data after outlier treatment.**")
             else:
-                st.markdown("Outliers will not be removed from the dataset.")
+                st.markdown("**No- Data Outliers will not be treated**")
                 treated_df = resampled_df
 
-            box_fig = go.Figure()
-            box_fig.add_trace(go.Box(y=treated_df[value_column], name=value_column, boxpoints='all', jitter=0.3, pointpos=-1.8, marker_color='blue'))
-            st.plotly_chart(box_fig)
-            st.markdown("**The box plot visualizes the distribution of the selected data. It displays the median (line inside the box), the interquartile range (the box), and potential outliers (points outside the whiskers). The box plot helps identify the central tendency and variability of the data.**")
+            # Continue with analysis and plots using treated_df
 
             decomposition = seasonal_decompose(treated_df[value_column], model='additive', period=30)
             trend = decomposition.trend.dropna()
@@ -589,7 +595,7 @@ def main():
     # Developer info at the bottom left
     st.markdown("""
         <div class='developer-info'>
-            Developer Name : Ashish Malviya Rev 1.0.10<br>
+            Developer Name : Ashish Malviya<br>
         </div>
     """, unsafe_allow_html=True)
 
