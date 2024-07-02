@@ -39,7 +39,7 @@ def load_logo(filename):
 # Developer info at the bottom left
 st.markdown("""
         <div class='developer-info'>
-            Developer Name : Ashish Malviya<br>
+            Developer Name : Ashish Malviya Rev 1.0.10<br>
         </div>
     """, unsafe_allow_html=True)
 
@@ -589,7 +589,7 @@ def main():
     # Developer info at the bottom left
     st.markdown("""
         <div class='developer-info'>
-            Developer Name : Ashish Malviya<br>
+            Developer Name : Ashish Malviya Rev 1.0.10<br>
         </div>
     """, unsafe_allow_html=True)
 
