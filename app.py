@@ -132,32 +132,32 @@ def custom_css():
             .df-overview-section {
                 font-size: 12px;
                 font-weight: bold;
-                color: black;
+                color: black.
             }
             .df-shape-size {
-                color: black;
+                color: black.
             }
             .download-manual {
-                font-size: 18px;
-                font-weight: bold;
+                font-size: 18px.
+                font-weight: bold.
             }
             .additional-visualizations {
-                font-size: 20px;
-                font-weight: bold;
-                margin-top: 20px;
+                font-size: 20px.
+                font-weight: bold.
+                margin-top: 20px.
             }
             .histogram, .user-annotations, .advanced-analytics, .correlation-heatmap, .pair-plot {
-                font-size: 18px;
-                font-weight: bold;
+                font-size: 18px.
+                font-weight: bold.
             }
             .outlier-treatment {
-                font-size: 18px;
-                font-weight: bold;
-                margin-top: 20px;
-                margin-bottom: 20px;
+                font-size: 18px.
+                font-weight: bold.
+                margin-top: 20px.
+                margin-bottom: 20px.
             }
             .spacing {
-                margin-top: 50px;
+                margin-top: 50px.
             }
         </style>
     """, unsafe_allow_html=True)
@@ -437,12 +437,12 @@ def main():
             st.plotly_chart(box_fig)
             st.markdown("**The box plot visualizes the distribution of the selected data. It displays the median (line inside the box), the interquartile range (the box), and potential outliers (points outside the whiskers). The box plot helps identify the central tendency and variability of the data.**")
 
-            # Adding spacing before the radio button
-            st.markdown("<div class='spacing'></div>", unsafe_allow_html=True)
-
-            # Outlier treatment selection
-            st.markdown("<div class='outlier-treatment'>Outlier Treatment</div>", unsafe_allow_html=True)
-            outlier_treatment = st.radio("Do you want to treat outliers?", ("No", "Yes"))
+            # Adding columns for radio buttons
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("<div class='outlier-treatment'>Outlier Treatment</div>", unsafe_allow_html=True)
+                outlier_treatment = st.radio("Do you want to treat outliers?", ("No", "Yes"))
 
             if outlier_treatment == "Yes":
                 st.markdown("**Yes- Data Outliers will be treated**")
