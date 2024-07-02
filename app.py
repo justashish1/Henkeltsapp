@@ -444,6 +444,9 @@ def main():
             st.markdown("<div class='outlier-treatment'>Outlier Treatment</div>", unsafe_allow_html=True)
             outlier_treatment = st.radio("Do you want to treat outliers?", ("No", "Yes"))
 
+            # Clear existing plots before generating new ones
+            st.empty()
+
             if outlier_treatment == "Yes":
                 st.markdown("**Yes- Data Outliers will be treated**")
                 treated_df = treat_outliers(resampled_df, value_column)
