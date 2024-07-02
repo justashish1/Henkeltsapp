@@ -90,74 +90,74 @@ def custom_css():
                 display: flex;
                 justify-content: space-between;
                 color: #FF0000;
-                align-items: center;
+                align-items: center.
             }
             .developer-info {
                 position: fixed;
-                bottom: 0;
-                left: 0;
+                bottom: 0.
+                left: 0.
                 text-align:left;
-                margin: 10px;
-                font-size: 12px;
+                margin: 10px.
+                font-size: 12px.
             }
             .stProgress > div > div > div > div {
-                background-color: #FF0000;
+                background-color: #FF0000.
             }
             .content {
-                padding-top: 0px;
+                padding-top: 0px.
             }
             .stButton > button {
-                background-color: #FF0000;
-                color: white;
-                border: none;
-                font-weight: bold;
+                background-color: #FF0000.
+                color: white.
+                border: none.
+                font-weight: bold.
             }
             .stButton > button:hover {
-                color: white;
-                background-color: #FF0000;
+                color: white.
+                background-color: #FF0000.
             }
             .custom-error {
-                background-color: #FF0000;
-                color: white;
-                padding: 10px;
-                border-radius: 5px;
-                text-align: center;
-                font-weight: bold;
+                background-color: #FF0000.
+                color: white.
+                padding: 10px.
+                border-radius: 5px.
+                text-align: center.
+                font-weight: bold.
             }
             .df-overview-title {
-                font-size: 12px;
-                font-weight: bold;
-                color: black;
+                font-size: 12px.
+                font-weight: bold.
+                color: black.
             }
             .df-overview-section {
-                font-size: 12px;
-                font-weight: bold;
-                color: black;
+                font-size: 12px.
+                font-weight: bold.
+                color: black.
             }
             .df-shape-size {
-                color: black;
+                color: black.
             }
             .download-manual {
-                font-size: 18px;
-                font-weight: bold;
+                font-size: 18px.
+                font-weight: bold.
             }
             .additional-visualizations {
-                font-size: 20px;
-                font-weight: bold;
-                margin-top: 20px;
+                font-size: 20px.
+                font-weight: bold.
+                margin-top: 20px.
             }
             .histogram, .user-annotations, .advanced-analytics, .correlation-heatmap, .pair-plot {
-                font-size: 18px;
-                font-weight: bold;
+                font-size: 18px.
+                font-weight: bold.
             }
             .outlier-treatment {
-                font-size: 18px;
-                font-weight: bold;
-                margin-top: 20px;
-                margin-bottom: 20px;
+                font-size: 18px.
+                font-weight: bold.
+                margin-top: 20px.
+                margin-bottom: 20px.
             }
             .spacing {
-                margin-top: 50px;
+                margin-top: 50px.
             }
         </style>
     """, unsafe_allow_html=True)
@@ -182,21 +182,21 @@ def add_js_script():
         <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             function updateTime() {
-                var now = new Date();
-                var hours = now.getHours() % 12 || 12;
-                var minutes = now.getMinutes();
-                var seconds = now.getSeconds();
-                var ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+                var now = new Date().
+                var hours = now.getHours() % 12 || 12.
+                var minutes = now.getMinutes().
+                var seconds = now.getSeconds().
+                var ampm = now.getHours() >= 12 ? 'PM' : 'AM'.
                 var timeString = now.getFullYear() + '-' + 
                                  ('0' + (now.getMonth() + 1)).slice(-2) + '-' + 
                                  ('0' + now.getDate()).slice(-2) + ' ' + 
                                  ('0' + hours).slice(-2) + ':' + 
                                  ('0' + minutes).slice(-2) + ':' + 
-                                 ('0' + seconds).slice(-2) + ' ' + ampm;
-                document.getElementById('current-time').innerHTML = timeString;
+                                 ('0' + seconds).slice(-2) + ' ' + ampm.
+                document.getElementById('current-time').innerHTML = timeString.
             }
-            setInterval(updateTime, 1000);
-        });
+            setInterval(updateTime, 1000).
+        }).
         </script>
     """, unsafe_allow_html=True)
 
@@ -539,8 +539,9 @@ def main():
             st.markdown("**The histogram visualizes the distribution of the data for each numeric column in the dataset.**")
 
             st.markdown("<div class='pair-plot'>Pair Plot</div>", unsafe_allow_html=True)
-            pair_plot_fig = sns.pairplot(df.select_dtypes(include=[np.number]), diag_kind='kde')
-            st.pyplot(pair_plot_fig)
+            fig_pair_plot = px.scatter_matrix(df.select_dtypes(include=[np.number]))
+            fig_pair_plot.update_traces(diagonal_visible=False, showupperhalf=True, marker=dict(color="blue", line=dict(color="white", width=0.5)))
+            st.plotly_chart(fig_pair_plot)
             logging.info("Pair plot generated.")
             st.markdown("**The pair plot displays pairwise relationships in the dataset, showing scatter plots for each pair of features and histograms for individual features.**")
 
