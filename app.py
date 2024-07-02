@@ -539,18 +539,25 @@ def main():
             st.markdown("**The histogram visualizes the distribution of the data for each numeric column in the dataset.**")
 
             st.markdown("<div class='pair-plot'>Pair Plot</div>", unsafe_allow_html=True)
-            pair_plot_fig = sns.pairplot(df.select_dtypes(include=[np.number]), diag_kind='kde')
-            st.pyplot(pair_plot_fig)
-            logging.info("Pair plot generated.")
-            st.markdown("**The pair plot displays pairwise relationships in the dataset, showing scatter plots for each pair of features and histograms for individual features.**")
+            if not df.select_dtypes(include=[np.number]).empty:
+                fig_pair_plot = px.scatter_matrix(df.select_dtypes(include=[np.number]))
+                fig_pair_plot.update_traces(diagonal_visible=False, showupperhalf=True, marker=dict(color="blue", line=dict(color="white", width=0.5)))
+                st.plotly_chart(fig_pair_plot)
+                st.markdown("**The pair plot displays pairwise relationships in the dataset, showing scatter plots for each pair of features and histograms for individual features.**")
+                logging.info("Pair plot generated.")
+            else:
+                st.markdown("**No numeric columns available for pair plot.**")
 
             st.markdown("<div class='correlation-heatmap'>Correlation Heatmap</div>", unsafe_allow_html=True)
-            corr = df.corr()
-            fig_heatmap = go.Figure(data=go.Heatmap(z=corr.values, x=corr.index.values, y=corr.columns.values, colorscale='Viridis'))
-            fig_heatmap.update_layout(title='Correlation Heatmap')
-            st.plotly_chart(fig_heatmap, use_container_width=True)
-            logging.info("Correlation heatmap generated.")
-            st.markdown("**The correlation heatmap displays the correlation coefficients between pairs of features in the dataset. The colors represent the strength of the correlations.**")
+            if not df.select_dtypes(include=[np.number]).empty:
+                corr = df.corr()
+                fig_heatmap = go.Figure(data=go.Heatmap(z=corr.values, x=corr.index.values, y=corr.columns.values, colorscale='Viridis'))
+                fig_heatmap.update_layout(title='Correlation Heatmap')
+                st.plotly_chart(fig_heatmap, use_container_width=True)
+                logging.info("Correlation heatmap generated.")
+                st.markdown("**The correlation heatmap displays the correlation coefficients between pairs of features in the dataset. The colors represent the strength of the correlations.**")
+            else:
+                st.markdown("**No numeric columns available for correlation heatmap.**")
 
             st.markdown("<div class='user-annotations'>User Annotations</div>", unsafe_allow_html=True)
             annotation_text = st.text_input("Enter annotation text")
