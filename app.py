@@ -54,7 +54,7 @@ def custom_css():
                 text-align: center;
                 font-weight: bold;
             }
-            .current-time {
+            .current-date {
                 font-size: 18px;
                 font-weight: bold;
                 display: inline-block;
@@ -163,41 +163,34 @@ def custom_css():
         </style>
     """, unsafe_allow_html=True)
 
-# Function to get the current time as a string for the clock
-def get_time(timezone_str='UTC'):
+# Function to get the current date as a string for the clock
+def get_date(timezone_str='UTC'):
     tz = pytz.timezone(timezone_str)
-    return datetime.now(tz).strftime('%Y-%m-%d %I:%M:%S %p')
+    return datetime.now(tz).strftime('%Y-%m-%d')
 
-# Display the logo and time
-def display_logo_and_time(logo_src, timezone_str):
-    current_time_html = f"""
+# Display the logo and date
+def display_logo_and_date(logo_src, timezone_str):
+    current_date_html = f"""
         <div class='header'>
-            <div class='current-time' id='current-time'>{get_time(timezone_str)}</div>
+            <div class='current-date' id='current-date'>{get_date(timezone_str)}</div>
             <img src='{logo_src}' class='logo'>
         </div>
     """
-    st.markdown(current_time_html, unsafe_allow_html=True)
+    st.markdown(current_date_html, unsafe_allow_html=True)
 
-# Add JavaScript for live clock and timezone detection
+# Add JavaScript for live date and timezone detection
 def add_js_script():
     st.markdown("""
         <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            function updateTime() {
+            function updateDate() {
                 var now = new Date();
-                var hours = now.getHours() % 12 || 12;
-                var minutes = now.getMinutes();
-                var seconds = now.getSeconds();
-                var ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-                var timeString = now.getFullYear() + '-' + 
+                var dateString = now.getFullYear() + '-' + 
                                  ('0' + (now.getMonth() + 1)).slice(-2) + '-' + 
-                                 ('0' + now.getDate()).slice(-2) + ' ' + 
-                                 ('0' + hours).slice(-2) + ':' + 
-                                 ('0' + minutes).slice(-2) + ':' + 
-                                 ('0' + seconds).slice(-2) + ' ' + ampm;
-                document.getElementById('current-time').innerHTML = timeString;
+                                 ('0' + now.getDate()).slice(-2);
+                document.getElementById('current-date').innerHTML = dateString;
             }
-            setInterval(updateTime, 1000);
+            setInterval(updateDate, 1000);
 
             var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             var tzElement = document.createElement('input');
@@ -313,7 +306,7 @@ def main():
     # Get the timezone from the hidden HTML element using Streamlit's query_params
     timezone = st.query_params.get('timezone', ['UTC'])[0]
 
-    display_logo_and_time(logo_src, timezone)
+    display_logo_and_date(logo_src, timezone)
     st.markdown("<h1 class='main-title'>HENKEL TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
     if 'authenticated' not in st.session_state:
