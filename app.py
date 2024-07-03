@@ -17,6 +17,8 @@ import logging
 from st_aggrid import AgGrid, GridOptionsBuilder
 import io
 import os
+import pytz
+from tzlocal import get_localzone
 
 # Set up logging
 logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
@@ -162,15 +164,21 @@ def custom_css():
         </style>
     """, unsafe_allow_html=True)
 
-# Get the current time as a string for the clock
-def get_time():
-    return datetime.now().strftime('%Y-%m-%d %I:%M:%S %p')
+# Function to get the current time as a string for the clock
+def get_time(timezone_str='UTC'):
+    tz = pytz.timezone(timezone_str)
+    return datetime.now(tz).strftime('%Y-%m-%d %I:%M:%S %p')
+
+# Function to detect the user's local timezone
+def get_local_timezone():
+    local_tz = get_localzone()
+    return str(local_tz)
 
 # Display the logo and time
-def display_logo_and_time(logo_src):
+def display_logo_and_time(logo_src, timezone_str):
     current_time_html = f"""
         <div class='header'>
-            <div class='current-time' id='current-time'>{get_time()}</div>
+            <div class='current-time' id='current-time'>{get_time(timezone_str)}</div>
             <img src='{logo_src}' class='logo'>
         </div>
     """
@@ -299,7 +307,11 @@ def treat_outliers(df, value_column):
 def main():
     custom_css()
     logo_src = load_logo('logo.png')
-    display_logo_and_time(logo_src)
+    
+    # Get the local timezone
+    local_timezone = get_local_timezone()
+    
+    display_logo_and_time(logo_src, local_timezone)
     add_js_script()
     st.markdown("<h1 class='main-title'>HENKEL TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
