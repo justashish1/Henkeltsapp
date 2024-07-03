@@ -1,0 +1,9 @@
+[theme]
+primaryColor="{#FF4B4B}"
+backgroundColor="{#FFFFFF}"
+textColor="{serif}"
+language="toml"
+
+--theme.primaryColor="{#FF4B4B}" 
+--theme.backgroundColor="{#FFFFFF}" 
+--theme.textColor="{serif}"
