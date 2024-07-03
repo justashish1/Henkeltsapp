@@ -18,7 +18,6 @@ from st_aggrid import AgGrid, GridOptionsBuilder
 import io
 import os
 import pytz
-from tzlocal import get_localzone
 
 # Set up logging
 logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
@@ -134,32 +133,32 @@ def custom_css():
             .df-overview-section {
                 font-size: 12px;
                 font-weight: bold;
-                color: black;
+                color: black.
             }
             .df-shape-size {
-                color: black;
+                color: black.
             }
             .download-manual {
                 font-size: 18px;
-                font-weight: bold;
+                font-weight: bold.
             }
             .additional-visualizations {
                 font-size: 20px;
                 font-weight: bold;
-                margin-top: 20px;
+                margin-top: 20px.
             }
             .histogram, .user-annotations, .advanced-analytics, .correlation-heatmap, .pair-plot {
                 font-size: 18px;
-                font-weight: bold;
+                font-weight: bold.
             }
             .outlier-treatment {
                 font-size: 18px;
-                font-weight: bold;
+                font-weight: bold.
                 margin-top: 20px;
-                margin-bottom: 20px;
+                margin-bottom: 20px.
             }
             .spacing {
-                margin-top: 50px;
+                margin-top: 50px.
             }
         </style>
     """, unsafe_allow_html=True)
@@ -168,11 +167,6 @@ def custom_css():
 def get_time(timezone_str='UTC'):
     tz = pytz.timezone(timezone_str)
     return datetime.now(tz).strftime('%Y-%m-%d %I:%M:%S %p')
-
-# Function to detect the user's local timezone
-def get_local_timezone():
-    local_tz = get_localzone()
-    return str(local_tz)
 
 # Display the logo and time
 def display_logo_and_time(logo_src, timezone_str):
@@ -184,7 +178,7 @@ def display_logo_and_time(logo_src, timezone_str):
     """
     st.markdown(current_time_html, unsafe_allow_html=True)
 
-# Add JavaScript for live clock
+# Add JavaScript for live clock and timezone detection
 def add_js_script():
     st.markdown("""
         <script>
@@ -204,6 +198,13 @@ def add_js_script():
                 document.getElementById('current-time').innerHTML = timeString;
             }
             setInterval(updateTime, 1000);
+
+            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            var tzElement = document.createElement('input');
+            tzElement.type = 'hidden';
+            tzElement.id = 'timezone';
+            tzElement.value = timezone;
+            document.body.appendChild(tzElement);
         });
         </script>
     """, unsafe_allow_html=True)
@@ -307,12 +308,12 @@ def treat_outliers(df, value_column):
 def main():
     custom_css()
     logo_src = load_logo('logo.png')
-    
-    # Get the local timezone
-    local_timezone = get_local_timezone()
-    
-    display_logo_and_time(logo_src, local_timezone)
     add_js_script()
+
+    # Get the timezone from the hidden HTML element using Streamlit's query_params
+    timezone = st.query_params.get('timezone', ['UTC'])[0]
+
+    display_logo_and_time(logo_src, timezone)
     st.markdown("<h1 class='main-title'>HENKEL TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
     if 'authenticated' not in st.session_state:
