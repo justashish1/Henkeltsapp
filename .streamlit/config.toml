@@ -3,14 +3,14 @@ primaryColor="#ff0101"
 backgroundColor="#1e1e1e"
 secondaryBackgroundColor="#000000"
 textColor="#f7f1f1"
-font="serif""
+font="serif"
 language="toml"
 
 --theme.primaryColor="#ff0101"
 --theme.backgroundColor="#1e1e1e"
 --theme.secondaryBackgroundColor="#000000"
 --theme.textColor="#f7f1f1"
---theme.font="serif""
+--theme.font="serif"
 
 
 
