@@ -94,12 +94,11 @@ def custom_css():
                 align-items: center.
             }
             .developer-info {
-                position: fixed.
-                bottom: 0.
-                left: 0.
-                text-align: left.
-                margin: 10px.
-                font-size: 12px.
+                position: fixed;
+                bottom: 10px;
+                left: 10px;
+                text-align: left;
+                font-size: 12px;
             }
             .stProgress > div > div > div > div {
                 background-color: #FF0000.
