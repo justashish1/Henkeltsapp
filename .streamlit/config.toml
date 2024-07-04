@@ -1,12 +1,12 @@
 [theme]
-primaryColor="#ff0101"
+primaryColor="#ff0000"
 backgroundColor="#1e1e1e"
 secondaryBackgroundColor="#000000"
 textColor="#f7f1f1"
 font="serif"
 language="toml"
 
---theme.primaryColor="#ff0101"
+--theme.primaryColor="#ff0000"
 --theme.backgroundColor="#1e1e1e"
 --theme.secondaryBackgroundColor="#000000"
 --theme.textColor="#f7f1f1"
