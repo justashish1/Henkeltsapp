@@ -311,6 +311,12 @@ def treat_outliers(df, value_column):
     treated_df = df[(df[value_column] >= lower_bound) & (df[value_column] <= upper_bound)]
     return treated_df
 
+# Function to filter out zero values
+def filter_zeros(df, columns):
+    for col in columns:
+        df = df[df[col] != 0]
+    return df
+
 # Main function
 def main():
     custom_css()
@@ -551,19 +557,22 @@ def main():
         numeric_columns = treated_df.select_dtypes(include=[np.number]).columns
         filtered_numeric_columns = [col for col in numeric_columns if col not in ['Anomaly', 'Cluster']]
 
+        # Filter out zero values
+        treated_df_filtered = filter_zeros(treated_df, filtered_numeric_columns)
+
         for i, col in enumerate(filtered_numeric_columns):  # Corrected line
-            fig_hist.add_trace(go.Histogram(x=treated_df[col], name=col, marker=dict(color=colors[i % len(colors)]), opacity=0.75))
+            fig_hist.add_trace(go.Histogram(x=treated_df_filtered[col], name=col, marker=dict(color=colors[i % len(colors)]), opacity=0.75))
 
         fig_hist.update_layout(barmode='overlay', title='Histogram of Numeric Columns', xaxis_title='Value', yaxis_title='Count', legend=dict(x=1, y=1, traceorder='normal'), bargap=0.2)
         fig_hist.update_traces(opacity=0.75)
         st.plotly_chart(fig_hist, use_container_width=True)
         logging.info("Histogram generated.")
-        st.markdown("**The histogram visualizes the distribution of the data for each numeric column in the dataset.**")
+        st.markdown("**The histogram visualizes the distribution of the data for each numeric column in the dataset, excluding zero values.**")
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
         st.markdown("<div class='pair-plot'>Pair Plot</div>", unsafe_allow_html=True)
-        pair_plot_fig = sns.pairplot(treated_df[filtered_numeric_columns], diag_kind='kde')
+        pair_plot_fig = sns.pairplot(treated_df_filtered[filtered_numeric_columns], diag_kind='kde')
         sns.set_style("white") 
         st.pyplot(pair_plot_fig)
         logging.info("Pair plot generated.")
@@ -572,7 +581,7 @@ def main():
         st.markdown("<hr>", unsafe_allow_html=True)
 
         st.markdown("<div class='correlation-heatmap'></div>", unsafe_allow_html=True)
-        corr = treated_df[filtered_numeric_columns].corr()
+        corr = treated_df_filtered[filtered_numeric_columns].corr()
         fig_heatmap = go.Figure(data=go.Heatmap(z=corr.values, x=corr.index.values, y=corr.columns.values, colorscale='Viridis'))
         fig_heatmap.update_layout(title='Correlation Heatmap')
         st.plotly_chart(fig_heatmap, use_container_width=True)
