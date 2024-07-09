@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import base64
@@ -476,6 +477,19 @@ def main():
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
+        # Add Box Plot after Time Series Plot
+        st.markdown("**Box Plot of Selected Value Column**")
+        box_plot_fig = px.box(
+            treated_df, 
+            y=value_column, 
+            points="all",
+            color_discrete_sequence=["blue"]
+        )
+        st.plotly_chart(box_plot_fig)
+        st.markdown("**The box plot displays the distribution of values in the selected column, including the median, quartiles, and potential outliers.**")
+
+        st.markdown("<hr>", unsafe_allow_html=True)
+
         decomposition = seasonal_decompose(treated_df[value_column], model='additive', period=30)
         trend = decomposition.trend.dropna()
         seasonal = decomposition.seasonal.dropna()
@@ -487,7 +501,6 @@ def main():
         decomposition_fig.add_trace(go.Scatter(x=resid.index, y=resid, mode='lines', name='Residuals', line=dict(color='green')))
         st.plotly_chart(decomposition_fig, use_container_width=True)
         st.markdown("**The time series decomposition plot breaks down the data into its trend, seasonal, and residual components. The trend component shows the long-term direction, the seasonal component captures repeating patterns, and the residual component represents random noise.**")
-
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
