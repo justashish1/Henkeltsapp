@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import base64
@@ -41,7 +40,7 @@ def load_logo(filename):
 # Developer info at the bottom left
 st.markdown("""
     <div class='developer-info'>
-        Developer Name : Ashish Malviya<br>
+        Developer Name : Ashish Malviya Version 1.0.19<br>
     </div>
 """, unsafe_allow_html=True)
 
@@ -81,6 +80,7 @@ def custom_css():
             }
             .logo {
                 height: 45px;
+                width: auto;  /* Ensures the aspect ratio is maintained */
                 display: inline-block;
                 margin-left: auto;
                 margin-right: 10px;
@@ -92,69 +92,81 @@ def custom_css():
                 display: flex;
                 justify-content: space-between;
                 color: #FF0000;
-                align-items: center.
+                align-items: center;
             }
             .developer-info {
+                font-size: 12px;
+                text-align: left;
                 position: fixed;
                 bottom: 10px;
                 left: 10px;
-                text-align: left;
-                font-size: 12px;
+                color: white;
             }
             .stProgress > div > div > div > div {
-                background-color: #FF0000.
+                background-color: #FF0000;
             }
             .content {
-                padding-top: 0px.
+                padding-top: 0px;
             }
             .stButton > button {
-                background-color: #FF0000.
-                color: white.
-                border: none.
-                font-weight: bold.
+                background-color: #FF0000;
+                color: white;
+                border: none;
+                font-weight: bold;
             }
             .stButton > button:hover {
-                color: white.
-                background-color: #FF0000.
+                color: white;
+                background-color: #FF0000;
             }
             .custom-error {
-                background-color: #FF0000.
-                color: white.
-                padding: 10px.
-                border-radius: 5px.
-                text-align: center.
-                font-weight: bold.
+                background-color: #FF0000;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                text-align: center;
+                font-weight: bold;
             }
             .df-overview-title {
-                font-size: 16px.
-                font-weight: bold.
+                font-size: 16px;
+                font-weight: bold;
             }
             .df-overview-section {
-                font-size: 16px.
-                font-weight: bold.
-                color: black.
+                font-size: 16px;
+                font-weight: bold;
+                color: black;
             }
             .df-shape-size {
             }
             .download-manual {
-                font-size: 18px.
-                font-weight: bold.
+                font-size: 18px;
+                font-weight: bold;
             }
             .outlier-treatment {
-                font-size: 18px.
-                font-weight: bold.
-                margin-top: 20px.
-                margin-bottom: 20px.
+                font-size: 18px;
+                font-weight: bold;
+                margin-top: 20px;
+                margin-bottom: 20px;
             }
             .spacing {
-                margin-top: 50px.
+                margin-top: 50px;
             }
             .left-side, .right-side {
-                height: 100%.
-                overflow-y: auto.
+                height: 100%;
+                overflow-y: auto;
             }
         </style>
     """, unsafe_allow_html=True)
+
+# Display the logo and date
+def display_logo_and_date(logo_src, timezone_str):
+    current_date_html = f"""
+        <div class='header'>
+            <div class='current-date' id='current-date'>{get_date(timezone_str)}</div>
+            <img src='{logo_src}' class='logo'>
+            <div class='developer-info'>Developer Name : Ashish Malviya</div>
+        </div>
+    """
+    st.markdown(current_date_html, unsafe_allow_html=True)
 
 # Function to get the current date as a string for the clock
 def get_date(timezone_str='UTC'):
@@ -181,17 +193,17 @@ def add_js_script():
                 var dateString = now.getFullYear() + '-' + 
                                  ('0' + (now.getMonth() + 1)).slice(-2) + '-' + 
                                  ('0' + now.getDate()).slice(-2);
-                document.getElementById('current-date').innerHTML = dateString;
+                document.getElementById('current-date').innerHTML = dateString.
             }
-            setInterval(updateDate, 1000);
+            setInterval(updateDate, 1000).
 
-            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            var tzElement = document.createElement('input');
-            tzElement.type = 'hidden';
-            tzElement.id = 'timezone';
-            tzElement.value = timezone;
-            document.body.appendChild(tzElement);
-        });
+            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone.
+            var tzElement = document.createElement('input').
+            tzElement.type = 'hidden'.
+            tzElement.id = 'timezone'.
+            tzElement.value = timezone.
+            document.body.appendChild(tzElement).
+        }).
         </script>
     """, unsafe_allow_html=True)
 
@@ -222,7 +234,7 @@ def validate_datetime_column(df, datetime_col):
         '%d/%m/%Y %I:%M:%S.%f %p',
         '%d/%m/%Y %I:%M:%S.%f',
         '%d/%m/%Y %I:%M:%S.',
-        '%d/%m/%Y %I'
+        '%d/%m/%Y %I',
         '%d/%m/%Y'
     ]
     
@@ -246,7 +258,7 @@ def preprocess_data(df, datetime_col):
         '%d/%m/%Y %I:%M:%S.%f %p',
         '%d/%m/%Y %I:%M:%S.%f',
         '%d/%m/%Y %I:%M:%S.',
-        '%d/%m/%Y %I'
+        '%d/%m/%Y %I',
         '%d/%m/%Y'
     ]
     for fmt in date_formats:
@@ -385,6 +397,10 @@ def main():
 
             st.markdown("<hr>", unsafe_allow_html=True)
             
+            anomaly_treatment = st.radio("Do you want to treat anomalies?", ("No", "Yes"))
+
+            st.markdown("<hr>", unsafe_allow_html=True)
+            
             degree = st.slider("Degree of Polynomial Regression", 1, 10, 2, key="degree_slider")
             annotation_text = st.text_input("Enter annotation text", key="annotation_text_input")
             annotation_x = st.text_input("Enter x value for annotation", key="annotation_x_input")
@@ -449,31 +465,42 @@ def main():
         else:
             treated_df = resampled_df
 
+        # Anomaly Detection using Isolation Forest
         isolation_forest = IsolationForest(contamination=0.05)
         anomalies = isolation_forest.fit_predict(treated_df[[value_column]])
         treated_df['Anomaly'] = anomalies
 
+        if anomaly_treatment == "Yes":
+            treated_df = treated_df[treated_df['Anomaly'] != -1]
+
         fig = go.Figure()
 
+        # Detect inactivity periods by calculating the rolling max-min difference and marking periods with low variation
         inactivity_mask = (treated_df[value_column].rolling('10min').max() - treated_df[value_column].rolling('10min').min()) <= 15
         active_df = treated_df[~inactivity_mask]
         inactive_df = treated_df[inactivity_mask]
 
+        # Plot active periods
         fig.add_trace(go.Scatter(x=active_df.index, y=active_df[value_column], mode='lines', line=dict(color='blue'), name='Active Periods', connectgaps=True))
+
+        # Plot inactivity periods
         fig.add_trace(go.Scatter(x=inactive_df.index, y=inactive_df[value_column], mode='lines', line=dict(color='red'), name='Inactivity Periods', connectgaps=True))
+
+        # Plot anomalies
         fig.add_trace(go.Scatter(x=treated_df[treated_df['Anomaly'] == -1].index, y=treated_df[treated_df['Anomaly'] == -1][value_column], mode='markers', name='Anomalies', marker=dict(color='orange')))
 
+        # Linear regression to find the trend in the data
         X = np.array((treated_df.index - treated_df.index.min()).total_seconds()).reshape(-1, 1)
         y = treated_df[value_column].values
         reg = LinearRegression().fit(X, y)
         y_pred = reg.predict(X)
 
+        # Plot the regression line
         fig.add_trace(go.Scatter(x=treated_df.index, y=y_pred, mode='lines', line=dict(color='green', dash='dash'), name='Regression Line'))
 
         fig.update_layout(title='Time Series Data with Inactivity Periods, Anomalies, and Regression Line', xaxis_title='DateTime', yaxis_title=value_column)
         st.plotly_chart(fig)
         st.markdown("**The time series plot displays the data over time, with blue lines representing active periods, red lines indicating inactivity periods, and orange markers highlighting anomalies. The green dashed line shows the linear regression line, which helps identify the overall trend in the data.**")
-
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -490,6 +517,25 @@ def main():
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
+        # Calculate IQR-based Outliers
+        Q1 = treated_df[value_column].quantile(0.25)
+        Q3 = treated_df[value_column].quantile(0.75)
+        IQR = Q3 - Q1
+        outliers_iqr = treated_df[(treated_df[value_column] < (Q1 - 1.5 * IQR)) | (treated_df[value_column] > (Q3 + 1.5 * IQR))]
+
+        st.markdown("**Outliers detected by IQR method:**")
+        st.dataframe(outliers_iqr, height=200)
+
+        # Anomalies detected by Isolation Forest
+        anomalies_iforest = treated_df[treated_df['Anomaly'] == -1]
+
+       # Displaying anomalies with scrolling functionality
+        st.markdown("**Anomalies detected by Isolation Forest:**")
+        st.dataframe(anomalies_iforest, height=200)
+
+        st.markdown("<hr>", unsafe_allow_html=True)
+
+        # Decompose the time series data into trend, seasonal, and residual components
         decomposition = seasonal_decompose(treated_df[value_column], model='additive', period=30)
         trend = decomposition.trend.dropna()
         seasonal = decomposition.seasonal.dropna()
@@ -504,6 +550,7 @@ def main():
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
+        # Create control charts to monitor the process stability over time
         control_chart_fig = go.Figure()
         control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column], mode='lines', name='Load cell Value', line=dict(color='blue')))
         control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column].rolling(window=30).std(), mode='lines', name='Rolling Std', line=dict(color='orange'), yaxis='y2'))
@@ -511,9 +558,9 @@ def main():
         st.plotly_chart(control_chart_fig, use_container_width=True)
         st.markdown("**The control chart monitors the process stability over time. The X-bar chart shows the mean of the process, and the R chart displays the range of the process variation. These charts help identify any unusual variations in the process.**")
 
-
         st.markdown("<hr>", unsafe_allow_html=True)
 
+        # Perform KMeans clustering to group the data into clusters and calculate silhouette score to measure the quality of clustering
         kmeans = KMeans(n_clusters=3)
         treated_df['Cluster'] = kmeans.fit_predict(treated_df[[value_column]])
         num_clusters = len(set(treated_df['Cluster']))
@@ -533,9 +580,9 @@ def main():
         st.plotly_chart(cluster_fig, use_container_width=True)
         st.markdown("**The clustering plot uses KMeans to group the data into clusters. Each color represents a different cluster, helping to identify patterns and similarities within the data. The silhouette score indicates how well the data points fit within their clusters, with higher values representing better clustering.**")
 
-
         st.markdown("<hr>", unsafe_allow_html=True)
 
+        # Calculate descriptive statistics for the selected value column
         stats = treated_df[value_column].describe(percentiles=[.25, .5, .75])
 
         total_active_time = active_df.shape[0] * sampling_interval
