@@ -399,17 +399,17 @@ def main():
             
             anomaly_treatment = st.radio("Do you want to treat anomalies?", ("No", "Yes"))
 
-            st.markdown("<hr>", unsafe_allow_html=True)
+            # st.markdown("<hr>", unsafe_allow_html=True)
             
-            degree = st.slider("Degree of Polynomial Regression", 1, 10, 2, key="degree_slider")
-            annotation_text = st.text_input("Enter annotation text", key="annotation_text_input")
-            annotation_x = st.text_input("Enter x value for annotation", key="annotation_x_input")
-            annotation_y = st.text_input("Enter y value for annotation", key="annotation_y_input")
-            if st.button("Add Annotation", key="add_annotation_button"):
-                if 'annotations' not in st.session_state:
-                    st.session_state.annotations = []
-                st.session_state.annotations.append((annotation_text, annotation_x, annotation_y))
-                st.experimental_rerun()
+            # degree = st.slider("Degree of Polynomial Regression", 1, 10, 2, key="degree_slider")
+            # annotation_text = st.text_input("Enter annotation text", key="annotation_text_input")
+            # annotation_x = st.text_input("Enter x value for annotation", key="annotation_x_input")
+            # annotation_y = st.text_input("Enter y value for annotation", key="annotation_y_input")
+            # if st.button("Add Annotation", key="add_annotation_button"):
+            #     if 'annotations' not in st.session_state:
+            #         st.session_state.annotations = []
+            #     st.session_state.annotations.append((annotation_text, annotation_x, annotation_y))
+            #     st.experimental_rerun()
 
             st.markdown("<hr>", unsafe_allow_html=True)
             
@@ -655,20 +655,20 @@ def main():
         logging.info("Correlation heatmap generated.")
         st.markdown("**The correlation heatmap displays the correlation coefficients between pairs of features in the dataset. The colors represent the strength of the correlations.**")
 
-        st.markdown("<hr>", unsafe_allow_html=True)
+        # st.markdown("<hr>", unsafe_allow_html=True)
 
-        if 'annotations' in st.session_state:
-            for annotation_text, annotation_x, annotation_y in st.session_state.annotations:
-                fig.add_trace(go.Scatter(x=[annotation_x], y=[annotation_y], mode='text', text=[annotation_text], name='Annotation'))
-            st.plotly_chart(fig)
+        # if 'annotations' in st.session_state:
+        #     for annotation_text, annotation_x, annotation_y in st.session_state.annotations:
+        #         fig.add_trace(go.Scatter(x=[annotation_x], y=[annotation_y], mode='text', text=[annotation_text], name='Annotation'))
+        #     st.plotly_chart(fig)
 
-        degree = st.session_state.get("degree_slider", 2)
-        if degree:
-            poly_features = np.polyfit(X.flatten(), y, degree)
-            poly_model = np.poly1d(poly_features)
-            y_poly_pred = poly_model(X.flatten())
-            fig.add_trace(go.Scatter(x=treated_df.index, y=y_poly_pred[:len(treated_df.index)], mode='lines', line=dict(color='purple', dash='dot'), name=f'Polynomial Regression (degree {degree})'))
-            st.plotly_chart(fig)
+        # degree = st.session_state.get("degree_slider", 2)
+        # if degree:
+        #     poly_features = np.polyfit(X.flatten(), y, degree)
+        #     poly_model = np.poly1d(poly_features)
+        #     y_poly_pred = poly_model(X.flatten())
+        #     fig.add_trace(go.Scatter(x=treated_df.index, y=y_poly_pred[:len(treated_df.index)], mode='lines', line=dict(color='purple', dash='dot'), name=f'Polynomial Regression (degree {degree})'))
+        #     st.plotly_chart(fig)
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
