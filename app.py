@@ -538,20 +538,20 @@ def main():
         else:
             st.markdown("<span style='color:red; font-weight:bold'>No anomalies found in the dataset or you have done the treatment</span>", unsafe_allow_html=True)
 
-        st.markdown("<hr>", unsafe_allow_html=True)
+        # st.markdown("<hr>", unsafe_allow_html=True)
 
-        # Decompose the time series data into trend, seasonal, and residual components
-        decomposition = seasonal_decompose(treated_df[value_column], model='additive', period=30)
-        trend = decomposition.trend.dropna()
-        seasonal = decomposition.seasonal.dropna()
-        resid = decomposition.resid.dropna()
+        # # Decompose the time series data into trend, seasonal, and residual components
+        # decomposition = seasonal_decompose(treated_df[value_column], model='additive', period=30)
+        # trend = decomposition.trend.dropna()
+        # seasonal = decomposition.seasonal.dropna()
+        # resid = decomposition.resid.dropna()
 
-        decomposition_fig = go.Figure()
-        decomposition_fig.add_trace(go.Scatter(x=trend.index, y=trend, mode='lines', name='Trend', line=dict(color='blue')))
-        decomposition_fig.add_trace(go.Scatter(x=seasonal.index, y=seasonal, mode='lines', name='Seasonality', line=dict(color='orange')))
-        decomposition_fig.add_trace(go.Scatter(x=resid.index, y=resid, mode='lines', name='Residuals', line=dict(color='green')))
-        st.plotly_chart(decomposition_fig, use_container_width=True)
-        st.markdown("**The time series decomposition plot breaks down the data into its trend, seasonal, and residual components. The trend component shows the long-term direction, the seasonal component captures repeating patterns, and the residual component represents random noise.**")
+        # decomposition_fig = go.Figure()
+        # decomposition_fig.add_trace(go.Scatter(x=trend.index, y=trend, mode='lines', name='Trend', line=dict(color='blue')))
+        # decomposition_fig.add_trace(go.Scatter(x=seasonal.index, y=seasonal, mode='lines', name='Seasonality', line=dict(color='orange')))
+        # decomposition_fig.add_trace(go.Scatter(x=resid.index, y=resid, mode='lines', name='Residuals', line=dict(color='green')))
+        # st.plotly_chart(decomposition_fig, use_container_width=True)
+        # st.markdown("**The time series decomposition plot breaks down the data into its trend, seasonal, and residual components. The trend component shows the long-term direction, the seasonal component captures repeating patterns, and the residual component represents random noise.**")
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
