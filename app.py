@@ -565,27 +565,27 @@ def main():
 
         # st.markdown("<hr>", unsafe_allow_html=True)
 
-        # Perform KMeans clustering to group the data into clusters and calculate silhouette score to measure the quality of clustering
-        kmeans = KMeans(n_clusters=3)
-        treated_df['Cluster'] = kmeans.fit_predict(treated_df[[value_column]])
-        num_clusters = len(set(treated_df['Cluster']))
+        # # Perform KMeans clustering to group the data into clusters and calculate silhouette score to measure the quality of clustering
+        # kmeans = KMeans(n_clusters=3)
+        # treated_df['Cluster'] = kmeans.fit_predict(treated_df[[value_column]])
+        # num_clusters = len(set(treated_df['Cluster']))
 
-        if num_clusters > 1:
-            silhouette_avg = silhouette_score(treated_df[[value_column]], treated_df['Cluster'])
-        else:
-            silhouette_avg = 'N/A'
+        # if num_clusters > 1:
+        #     silhouette_avg = silhouette_score(treated_df[[value_column]], treated_df['Cluster'])
+        # else:
+        #     silhouette_avg = 'N/A'
 
-        cluster_fig = go.Figure()
-        colors = ['blue', 'orange', 'green']
-        for cluster in range(num_clusters):
-            cluster_data = treated_df[treated_df['Cluster'] == cluster]
-            cluster_fig.add_trace(go.Scatter(x=cluster_data.index, y=cluster_data[value_column], mode='markers', marker=dict(color=colors[cluster]), name=f'Cluster {cluster}'))
+        # cluster_fig = go.Figure()
+        # colors = ['blue', 'orange', 'green']
+        # for cluster in range(num_clusters):
+        #     cluster_data = treated_df[treated_df['Cluster'] == cluster]
+        #     cluster_fig.add_trace(go.Scatter(x=cluster_data.index, y=cluster_data[value_column], mode='markers', marker=dict(color=colors[cluster]), name=f'Cluster {cluster}'))
 
-        cluster_fig.update_layout(title=f'KMeans Clustering (Silhouette Score: {silhouette_avg})', xaxis_title='DateTime', yaxis_title=value_column)
-        st.plotly_chart(cluster_fig, use_container_width=True)
-        st.markdown("**The clustering plot uses KMeans to group the data into clusters. Each color represents a different cluster, helping to identify patterns and similarities within the data. The silhouette score indicates how well the data points fit within their clusters, with higher values representing better clustering.**")
+        # cluster_fig.update_layout(title=f'KMeans Clustering (Silhouette Score: {silhouette_avg})', xaxis_title='DateTime', yaxis_title=value_column)
+        # st.plotly_chart(cluster_fig, use_container_width=True)
+        # st.markdown("**The clustering plot uses KMeans to group the data into clusters. Each color represents a different cluster, helping to identify patterns and similarities within the data. The silhouette score indicates how well the data points fit within their clusters, with higher values representing better clustering.**")
 
-        st.markdown("<hr>", unsafe_allow_html=True)
+        # st.markdown("<hr>", unsafe_allow_html=True)
 
         # Calculate descriptive statistics for the selected value column
         stats = treated_df[value_column].describe(percentiles=[.25, .5, .75])
