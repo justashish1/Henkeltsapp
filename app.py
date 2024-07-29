@@ -555,15 +555,15 @@ def main():
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
-        # Create control charts to monitor the process stability over time
-        control_chart_fig = go.Figure()
-        control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column], mode='lines', name='Load cell Value', line=dict(color='blue')))
-        control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column].rolling(window=30).std(), mode='lines', name='Rolling Std', line=dict(color='orange'), yaxis='y2'))
-        control_chart_fig.update_layout(title='Control Charts (X-bar and R charts)', xaxis_title='DateTime', yaxis=dict(title=value_column), yaxis2=dict(title='Standard Deviation', overlaying='y', side='right'))
-        st.plotly_chart(control_chart_fig, use_container_width=True)
-        st.markdown("**The control chart monitors the process stability over time. The X-bar chart shows the mean of the process, and the R chart displays the range of the process variation. These charts help identify any unusual variations in the process.**")
+        # # Create control charts to monitor the process stability over time
+        # control_chart_fig = go.Figure()
+        # control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column], mode='lines', name='Load cell Value', line=dict(color='blue')))
+        # control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column].rolling(window=30).std(), mode='lines', name='Rolling Std', line=dict(color='orange'), yaxis='y2'))
+        # control_chart_fig.update_layout(title='Control Charts (X-bar and R charts)', xaxis_title='DateTime', yaxis=dict(title=value_column), yaxis2=dict(title='Standard Deviation', overlaying='y', side='right'))
+        # st.plotly_chart(control_chart_fig, use_container_width=True)
+        # st.markdown("**The control chart monitors the process stability over time. The X-bar chart shows the mean of the process, and the R chart displays the range of the process variation. These charts help identify any unusual variations in the process.**")
 
-        st.markdown("<hr>", unsafe_allow_html=True)
+        # st.markdown("<hr>", unsafe_allow_html=True)
 
         # Perform KMeans clustering to group the data into clusters and calculate silhouette score to measure the quality of clustering
         kmeans = KMeans(n_clusters=3)
