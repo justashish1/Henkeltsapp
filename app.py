@@ -141,7 +141,7 @@ def custom_css():
                 font-size: 12px;
                 font-weight: bold;
                 position: fixed;
-                bottom: 50px;
+                bottom: 20px;
                 left: 10px;
                 background-color: #FF0000;
                 color: white !important;
