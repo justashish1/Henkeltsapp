@@ -427,7 +427,7 @@ def main():
         
         st.markdown("""
             <div class='developer-info'>
-                Copyright © 2021 HENKEL-All Rights Reserved Version 1.0.21, Last updated on 08 July 2024, Visit : www.HENKEL.com<br>
+                Developer :Ashish Malviya, Version 1.0.21, Last updated on 08 July 2024 <br>
             </div>
         """, unsafe_allow_html=True)
 
