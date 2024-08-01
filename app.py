@@ -98,7 +98,7 @@ def custom_css():
                 font-size: 12px;
                 text-align: left;
                 position: fixed;
-                bottom: 10px;
+                bottom: 150px;
                 left: 10px;
                 color: white;
             }
@@ -141,7 +141,7 @@ def custom_css():
                 font-size: 12px;
                 font-weight: bold;
                 position: fixed;
-                bottom: 30px;
+                bottom: 10px;
                 left: 10px;
                 background-color: #FF0000;
                 color: white !important;
