@@ -24,7 +24,7 @@ logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s 
 logging.info('Application started')
 
 # Set the page configuration
-st.set_page_config(page_title="HENKEL Timeseries Analysis Application", layout="wide")
+st.set_page_config(page_title="Starengts Timeseries Analysis Application", layout="wide")
 
 # Generate time options
 def generate_time_options():
@@ -43,7 +43,7 @@ def custom_css():
         <style>
             .main-title {
                 font-size: 25px;
-                color: #FF0000;
+                color: #32c800;
                 text-align: center;
                 font-weight: bold;
             }
@@ -66,7 +66,7 @@ def custom_css():
                 position: relative;
                 top: 5px;
                 left: 30px;
-                color: #FF0000;
+                color: #32c800;
             }
             .center-text {
                 text-align: center;
@@ -84,7 +84,7 @@ def custom_css():
                 margin-bottom: 20px;
                 display: flex;
                 justify-content: space-between;
-                color: #FF0000;
+                color: #32c800;
                 align-items: center;
             }
             .developer-info {
@@ -96,23 +96,23 @@ def custom_css():
                 color: white;
             }
             .stProgress > div > div > div > div {
-                background-color: #FF0000;
+                background-color: #32c800;
             }
             .content {
                 padding-top: 0px;
             }
             .stButton > button {
-                background-color: #FF0000;
+                background-color: #32c800;
                 color: white;
                 border: none;
                 font-weight: bold;
             }
             .stButton > button:hover {
                 color: white;
-                background-color: #FF0000;
+                background-color: #32c800;
             }
             .custom-error {
-                background-color: #FF0000;
+                background-color: #32c800;
                 color: white;
                 padding: 10px;
                 border-radius: 5px;
@@ -136,7 +136,7 @@ def custom_css():
                 position: fixed;
                 bottom: 10px;
                 left: 25px;
-                background-color: #FF0000;
+                background-color: #32c800;
                 color: white !important;
                 padding: 4px 8px; /* Adjusted padding to reduce the button size */
                 border-radius: 5px;
@@ -412,7 +412,7 @@ def main():
     timezone = st.query_params.get('timezone', ['UTC'])[0]
 
     display_logo_and_date(logo_src, timezone)
-    st.markdown("<h1 class='main-title'>HENKEL TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>STARENGTS TIMESERIES ANALYSIS APPLICATION</h1>", unsafe_allow_html=True)
 
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
@@ -427,7 +427,7 @@ def main():
         
         st.markdown("""
             <div class='developer-info'>
-                Copyright © 2021 HENKEL-All Rights Reserved Version 1.0.21, Last updated on 08 July 2024, Visit : www.HENKEL.com<br>
+                Copyright © 2021 Starengts-All Rights Reserved Version 1.0.21, Last updated on 08 July 2024, Visit : www.starengts.com<br>
             </div>
         """, unsafe_allow_html=True)
 
