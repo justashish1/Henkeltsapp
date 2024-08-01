@@ -142,7 +142,7 @@ def custom_css():
                 font-weight: bold;
                 position: fixed;
                 bottom: 50px;
-                right: 10px;
+                left: 10px;
                 background-color: #FF0000;
                 color: white !important;
                 padding: 4px 8px; /* Adjusted padding to reduce the button size */
