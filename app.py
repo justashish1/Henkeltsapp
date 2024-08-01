@@ -138,8 +138,17 @@ def custom_css():
             .df-shape-size {
             }
             .download-manual {
-                font-size: 18px;
+                font-size: 12px;
                 font-weight: bold;
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                background-color: #FF0000;
+                color: white !important;
+                padding: 4px 8px; /* Adjusted padding to reduce the button size */
+                border-radius: 5px;
+                text-align: center;
+                text-decoration: none;
             }
             .outlier-treatment {
                 font-size: 18px;
@@ -172,16 +181,6 @@ def display_logo_and_date(logo_src, timezone_str):
 def get_date(timezone_str='UTC'):
     tz = pytz.timezone(timezone_str)
     return datetime.now(tz).strftime('%Y-%m-%d')
-
-# Display the logo and date
-def display_logo_and_date(logo_src, timezone_str):
-    current_date_html = f"""
-        <div class='header'>
-            <div class='current-date' id='current-date'>{get_date(timezone_str)}</div>
-            <img src='{logo_src}' class='logo'>
-        </div>
-    """
-    st.markdown(current_date_html, unsafe_allow_html=True)
 
 # Add JavaScript for live date and timezone detection
 def add_js_script():
@@ -391,7 +390,7 @@ def download_manual():
             manual_data = file.read()
         file_name = os.path.basename(manual_path)
         b64 = base64.b64encode(manual_data).decode()
-        href = f'<a href="data:application/pdf;base64,{b64}" download="{file_name}"> {file_name}</a>'
+        href = f'<a href="data:application/pdf;base64,{b64}" download="{file_name}" class="download-manual">Download Manual</a>'
         st.markdown(href, unsafe_allow_html=True)
     else:
         st.warning("Manual not available. Send request to Ashish Malviya!")
@@ -433,6 +432,7 @@ def main():
             authenticate(username, password)
             if st.session_state.authenticated:
                 st.experimental_rerun()
+        download_manual()  # Add manual download button on the login screen
         st.stop()
 
     with st.sidebar:
@@ -479,17 +479,17 @@ def main():
             
             anomaly_treatment = st.radio("Do you want to treat anomalies?", ("No", "Yes"))
 
-            # st.markdown("<hr>", unsafe_allow_html=True)
+            st.markdown("<hr>", unsafe_allow_html=True)
             
-            # degree = st.slider("Degree of Polynomial Regression", 1, 10, 2, key="degree_slider")
-            # annotation_text = st.text_input("Enter annotation text", key="annotation_text_input")
-            # annotation_x = st.text_input("Enter x value for annotation", key="annotation_x_input")
-            # annotation_y = st.text_input("Enter y value for annotation", key="annotation_y_input")
-            # if st.button("Add Annotation", key="add_annotation_button"):
-            #     if 'annotations' not in st.session_state:
-            #         st.session_state.annotations = []
-            #     st.session_state.annotations.append((annotation_text, annotation_x, annotation_y))
-            #     st.experimental_rerun()
+            degree = st.slider("Degree of Polynomial Regression", 1, 10, 2, key="degree_slider")
+            annotation_text = st.text_input("Enter annotation text", key="annotation_text_input")
+            annotation_x = st.text_input("Enter x value for annotation", key="annotation_x_input")
+            annotation_y = st.text_input("Enter y value for annotation", key="annotation_y_input")
+            if st.button("Add Annotation", key="add_annotation_button"):
+                if 'annotations' not in st.session_state:
+                    st.session_state.annotations = []
+                st.session_state.annotations.append((annotation_text, annotation_x, annotation_y))
+                st.experimental_rerun()
 
             st.markdown("<hr>", unsafe_allow_html=True)
             
@@ -500,8 +500,7 @@ def main():
             
             st.markdown("<hr>", unsafe_allow_html=True)
             
-            st.markdown("<div class='download-manual'>Download Manual</div>", unsafe_allow_html=True)
-            download_manual()
+            download_manual()  # Add manual download button on the login screen
 
     if 'df' in st.session_state:
         df = st.session_state.df
@@ -618,54 +617,54 @@ def main():
         else:
             st.markdown("<span style='color:red; font-weight:bold'>No anomalies found in the dataset or you have done the treatment</span>", unsafe_allow_html=True)
 
-        # st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown("<hr>", unsafe_allow_html=True)
 
-        # # Decompose the time series data into trend, seasonal, and residual components
-        # decomposition = seasonal_decompose(treated_df[value_column], model='additive', period=30)
-        # trend = decomposition.trend.dropna()
-        # seasonal = decomposition.seasonal.dropna()
-        # resid = decomposition.resid.dropna()
+        # Decompose the time series data into trend, seasonal, and residual components
+        decomposition = seasonal_decompose(treated_df[value_column], model='additive', period=30)
+        trend = decomposition.trend.dropna()
+        seasonal = decomposition.seasonal.dropna()
+        resid = decomposition.resid.dropna()
 
-        # decomposition_fig = go.Figure()
-        # decomposition_fig.add_trace(go.Scatter(x=trend.index, y=trend, mode='lines', name='Trend', line=dict(color='blue')))
-        # decomposition_fig.add_trace(go.Scatter(x=seasonal.index, y=seasonal, mode='lines', name='Seasonality', line=dict(color='orange')))
-        # decomposition_fig.add_trace(go.Scatter(x=resid.index, y=resid, mode='lines', name='Residuals', line=dict(color='green')))
-        # st.plotly_chart(decomposition_fig, use_container_width=True)
-        # st.markdown("**The time series decomposition plot breaks down the data into its trend, seasonal, and residual components. The trend component shows the long-term direction, the seasonal component captures repeating patterns, and the residual component represents random noise.**")
+        decomposition_fig = go.Figure()
+        decomposition_fig.add_trace(go.Scatter(x=trend.index, y=trend, mode='lines', name='Trend', line=dict(color='blue')))
+        decomposition_fig.add_trace(go.Scatter(x=seasonal.index, y=seasonal, mode='lines', name='Seasonality', line=dict(color='orange')))
+        decomposition_fig.add_trace(go.Scatter(x=resid.index, y=resid, mode='lines', name='Residuals', line=dict(color='green')))
+        st.plotly_chart(decomposition_fig, use_container_width=True)
+        st.markdown("**The time series decomposition plot breaks down the data into its trend, seasonal, and residual components. The trend component shows the long-term direction, the seasonal component captures repeating patterns, and the residual component represents random noise.**")
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
-        # # Create control charts to monitor the process stability over time
-        # control_chart_fig = go.Figure()
-        # control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column], mode='lines', name='Load cell Value', line=dict(color='blue')))
-        # control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column].rolling(window=30).std(), mode='lines', name='Rolling Std', line=dict(color='orange'), yaxis='y2'))
-        # control_chart_fig.update_layout(title='Control Charts (X-bar and R charts)', xaxis_title='DateTime', yaxis=dict(title=value_column), yaxis2=dict(title='Standard Deviation', overlaying='y', side='right'))
-        # st.plotly_chart(control_chart_fig, use_container_width=True)
-        # st.markdown("**The control chart monitors the process stability over time. The X-bar chart shows the mean of the process, and the R chart displays the range of the process variation. These charts help identify any unusual variations in the process.**")
+        # Create control charts to monitor the process stability over time
+        control_chart_fig = go.Figure()
+        control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column], mode='lines', name='Load cell Value', line=dict(color='blue')))
+        control_chart_fig.add_trace(go.Scatter(x=treated_df.index, y=treated_df[value_column].rolling(window=30).std(), mode='lines', name='Rolling Std', line=dict(color='orange'), yaxis='y2'))
+        control_chart_fig.update_layout(title='Control Charts (X-bar and R charts)', xaxis_title='DateTime', yaxis=dict(title=value_column), yaxis2=dict(title='Standard Deviation', overlaying='y', side='right'))
+        st.plotly_chart(control_chart_fig, use_container_width=True)
+        st.markdown("**The control chart monitors the process stability over time. The X-bar chart shows the mean of the process, and the R chart displays the range of the process variation. These charts help identify any unusual variations in the process.**")
 
-        # st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown("<hr>", unsafe_allow_html=True)
 
-        # # Perform KMeans clustering to group the data into clusters and calculate silhouette score to measure the quality of clustering
-        # kmeans = KMeans(n_clusters=3)
-        # treated_df['Cluster'] = kmeans.fit_predict(treated_df[[value_column]])
-        # num_clusters = len(set(treated_df['Cluster']))
+        # Perform KMeans clustering to group the data into clusters and calculate silhouette score to measure the quality of clustering
+        kmeans = KMeans(n_clusters=3)
+        treated_df['Cluster'] = kmeans.fit_predict(treated_df[[value_column]])
+        num_clusters = len(set(treated_df['Cluster']))
 
-        # if num_clusters > 1:
-        #     silhouette_avg = silhouette_score(treated_df[[value_column]], treated_df['Cluster'])
-        # else:
-        #     silhouette_avg = 'N/A'
+        if num_clusters > 1:
+            silhouette_avg = silhouette_score(treated_df[[value_column]], treated_df['Cluster'])
+        else:
+            silhouette_avg = 'N/A'
 
-        # cluster_fig = go.Figure()
-        # colors = ['blue', 'orange', 'green']
-        # for cluster in range(num_clusters):
-        #     cluster_data = treated_df[treated_df['Cluster'] == cluster]
-        #     cluster_fig.add_trace(go.Scatter(x=cluster_data.index, y=cluster_data[value_column], mode='markers', marker=dict(color=colors[cluster]), name=f'Cluster {cluster}'))
+        cluster_fig = go.Figure()
+        colors = ['blue', 'orange', 'green']
+        for cluster in range(num_clusters):
+            cluster_data = treated_df[treated_df['Cluster'] == cluster]
+            cluster_fig.add_trace(go.Scatter(x=cluster_data.index, y=cluster_data[value_column], mode='markers', marker=dict(color=colors[cluster]), name=f'Cluster {cluster}'))
 
-        # cluster_fig.update_layout(title=f'KMeans Clustering (Silhouette Score: {silhouette_avg})', xaxis_title='DateTime', yaxis_title=value_column)
-        # st.plotly_chart(cluster_fig, use_container_width=True)
-        # st.markdown("**The clustering plot uses KMeans to group the data into clusters. Each color represents a different cluster, helping to identify patterns and similarities within the data. The silhouette score indicates how well the data points fit within their clusters, with higher values representing better clustering.**")
+        cluster_fig.update_layout(title=f'KMeans Clustering (Silhouette Score: {silhouette_avg})', xaxis_title='DateTime', yaxis_title=value_column)
+        st.plotly_chart(cluster_fig, use_container_width=True)
+        st.markdown("**The clustering plot uses KMeans to group the data into clusters. Each color represents a different cluster, helping to identify patterns and similarities within the data. The silhouette score indicates how well the data points fit within their clusters, with higher values representing better clustering.**")
 
-        # st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown("<hr>", unsafe_allow_html=True)
 
         # Calculate descriptive statistics for the selected value column
         stats = treated_df[value_column].describe(percentiles=[.25, .5, .75])
@@ -735,20 +734,20 @@ def main():
         logging.info("Correlation heatmap generated.")
         st.markdown("**The correlation heatmap displays the correlation coefficients between pairs of features in the dataset. The colors represent the strength of the correlations.**")
 
-        # st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown("<hr>", unsafe_allow_html=True)
 
-        # if 'annotations' in st.session_state:
-        #     for annotation_text, annotation_x, annotation_y in st.session_state.annotations:
-        #         fig.add_trace(go.Scatter(x=[annotation_x], y=[annotation_y], mode='text', text=[annotation_text], name='Annotation'))
-        #     st.plotly_chart(fig)
+        if 'annotations' in st.session_state:
+            for annotation_text, annotation_x, annotation_y in st.session_state.annotations:
+                fig.add_trace(go.Scatter(x=[annotation_x], y=[annotation_y], mode='text', text=[annotation_text], name='Annotation'))
+            st.plotly_chart(fig)
 
-        # degree = st.session_state.get("degree_slider", 2)
-        # if degree:
-        #     poly_features = np.polyfit(X.flatten(), y, degree)
-        #     poly_model = np.poly1d(poly_features)
-        #     y_poly_pred = poly_model(X.flatten())
-        #     fig.add_trace(go.Scatter(x=treated_df.index, y=y_poly_pred[:len(treated_df.index)], mode='lines', line=dict(color='purple', dash='dot'), name=f'Polynomial Regression (degree {degree})'))
-        #     st.plotly_chart(fig)
+        degree = st.session_state.get("degree_slider", 2)
+        if degree:
+            poly_features = np.polyfit(X.flatten(), y, degree)
+            poly_model = np.poly1d(poly_features)
+            y_poly_pred = poly_model(X.flatten())
+            fig.add_trace(go.Scatter(x=treated_df.index, y=y_poly_pred[:len(treated_df.index)], mode='lines', line=dict(color='purple', dash='dot'), name=f'Polynomial Regression (degree {degree})'))
+            st.plotly_chart(fig)
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
